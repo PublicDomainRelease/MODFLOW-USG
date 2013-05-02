@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{09E64837-1FCA-4F68-8E7D-6013ACD6D0F4}">
+	<Platforms>
+		<Platform Name="Win32"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/heap-arrays:0" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" FloatingPointExceptionHandling="fpe0" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" Interfaces="true"/>
+				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\mfusg.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" HeapArrays="0" FloatingPointExceptionHandling="fpe0" Traceback="true"/>
+				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\mfusg.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<File RelativePath="..\src\CLN2BasU1.f"/>
+		<File RelativePath="..\src\CLN2Props1.f"/>
+		<File RelativePath="..\src\DISU2GNCb1.f"/>
+		<File RelativePath="..\src\DISU2GNCn1.f"/>
+		<File RelativePath="..\src\glo2basU1.f"/>
+		<File RelativePath="..\src\GLO2btnU1.f"/>
+		<File RelativePath="..\src\GLO2SMS-U1.f"/>
+		<File RelativePath="..\src\GMODULES.F"/>
+		<File RelativePath="..\src\GWF2BASU1.F"/>
+		<File RelativePath="..\src\GWF2BCF-LPF-U1.F"/>
+		<File RelativePath="..\src\gwf2chd7U1.f"/>
+		<File RelativePath="..\src\gwf2drn7U1.f"/>
+		<File RelativePath="..\src\gwf2evt8U1.f"/>
+		<File RelativePath="..\src\gwf2fhb7U1.f"/>
+		<File RelativePath="..\src\gwf2gag7U1.f"/>
+		<File RelativePath="..\src\gwf2ghb7U1.f"/>
+		<File RelativePath="..\src\gwf2hfb7U1.f"/>
+		<File RelativePath="..\src\gwf2lak7U1.f"/>
+		<File RelativePath="..\src\gwf2rch8U1.f"/>
+		<File RelativePath="..\src\gwf2riv7U1.f"/>
+		<File RelativePath="..\src\gwf2sfr7U1.f"/>
+		<File RelativePath="..\src\gwf2str7U1.f"/>
+		<File RelativePath="..\src\gwf2sub7U1.f"/>
+		<File RelativePath="..\src\gwf2wel7U1.f"/>
+		<File RelativePath="..\src\Lak_Gag_Sfr_Modules.f"/>
+		<File RelativePath="..\src\mfusg.f"/>
+		<File RelativePath="..\src\parutl7.f"/>
+		<File RelativePath="..\src\pcgu7.f"/>
+		<File RelativePath="..\src\utl7U1.f"/>
+		<File RelativePath="..\src\xmd.f"/>
+		<File RelativePath="..\src\xmdlib_2.f"/></Filter></Files>
+	<Globals/></VisualStudioProject>
