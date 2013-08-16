@@ -13,6 +13,43 @@ NOTE: Any use of trade, product or firm names is for descriptive purposes
 
 
 
+o Version 1.1 08/23/2013:
+    CLN2BASU1 -- Renamed some internal variables and changed how the CLN
+       constant-head budget terms are tabulated.
+    DISU2GNCB1 -- Minor source formatting changes.
+    DISU2GNCN1 -- Devised new approach for expanding the system of 
+       equations to include ghost-node connections.  New method should 
+       be substantially faster for problems with many ghost nodes. Fixed
+       case where ghost-node contributing cell starts or becomes inactive.
+    GLO2SMS-U1 -- Added support for PCGU bgcs option.
+    GMODULES -- Renamed TMPA variable to FLOWJA and fixed an 
+       initialization issue with this variable.
+    GWF2BCF-LPF-U1 -- Revised method for calculating constant-head flows.
+       Constant-head flows are now calculated from FLOWJA array instead
+       of being recalculated.  Constant-head flows are tabulated by cell
+       face instead of by cell to provide a more accurate budget.
+    GWF2GHB7U1 -- Fixed the NOPRINT option.
+    GWF2LAK7U1 -- Fixed several bugs related to lakes and their use with
+       unstructured grid models.
+    GWF2SFR7U1 -- Fixed several bugs related to streams and their use
+       with unstructured grid models.
+    GWF2STR7U1 -- Added support for auxiliary variables and for reading
+       free format input files.  The 'STREAM FLOW OUT' budget term is now
+       written in compact form when compact budgets are used.
+    GWF2WEL7U1 -- Removed inactivation of well package when there are no
+       active wells.
+    PCGU7 -- Added the bi-conjugate gradient stabilized acceleration 
+       method for the PCGU linear solver.  Changed default pcgu settings
+       for 'simple', 'moderate', and 'complex'. See input instructions for
+       additional details.
+    UTL7U1 -- Small formatting change.
+    XMD -- Added warning if reduced system (IREDSYS=1) is used.
+    MFUSG -- Small revisions and change in subroutine calls for tabulating
+       constant-head budget terms.
+    SPARSE -- Added new SPARSEMATRIX module to facilitate matrix expansion
+       for ghost nodes.
+
+
 o Version 1.0 05/03/2013:
 
 This version is the initial release.

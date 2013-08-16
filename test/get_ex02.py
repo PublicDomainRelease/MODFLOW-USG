@@ -1,5 +1,5 @@
 #simple Python script for downloading the MODFLOW-USG example problem
-#from a private USGS ftp site.
+#from a public USGS ftp site.
 
 import os
 import urllib2
@@ -12,8 +12,7 @@ file_name = url.split('/')[-1]
 try:
     u = urllib2.urlopen(url)
 except:
-    print ('Cannot download the file.  You must be on the USGS domain '
-           'in order to access this file.')
+    print ('Error.  Cannot download the file.')
     raise Exception()
 f = open(file_name, 'wb')
 meta = u.info()

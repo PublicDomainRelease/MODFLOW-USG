@@ -22,6 +22,7 @@ csp      USE GNC2MODULE, ONLY:ISYMGNC2
 !     LOCAL VARIABLES
 !     ------------------------------------------------------------------
       INTEGER lloc, istart, istop, i, n, K, IFDPARAM, MXVL, NPP
+      INTEGER IPCGUM
       CHARACTER(LEN=200) line
       REAL r, HCLOSEdum, HICLOSEdum,  thetadum, amomentdum,yo
       REAL akappadum, gammadum, BREDUCDUM,BTOLDUM,RESLIMDUM
@@ -193,12 +194,14 @@ C4a-------for XMD solver
         ISYMFLG = 0
         IF(IACL.EQ.0) ISYMFLG = 1
       ELSEIF ( Linmeth==2 )Then
-C4b-------for pcgp solver
+C4b-------for pcgu solver
         Write(iout,*) '***PCGU linear solver will be used***'
         CALL PCGU7U1AR(IN, NJA, NEQS, MXITER, HICLOSE, ITER1, IPRSMS,
-     +                 IFDPARAM)
+     +                 IFDPARAM, IPCGUM)
         Write(iout,*)
-        ISYMFLG = 1
+!        ISYMFLG = 1
+        ISYMFLG = 0
+        IF ( IPCGUM.EQ.1 ) ISYMFLG = 1
       ELSE
 C4c-----Incorrect linear solver flag
         Write(iout,*) '***Incorrect value for Linear solution method ',
@@ -1012,12 +1015,12 @@ C3B---------FIND UPSTREAM NODE AND HIGHER BOT NODE
           IF(BNH.GT.BNL) IHBOT = NH
           IF(ACLNNDS(IH,3).EQ.1)THEN
 C3C---------FILL DKDHC FOR HORIZONTAL CLN CELL (USE UPSTREAM WETTED PERIMETER)
-              IFLIN = IFLINCLN(IUPS-NODES)
-              IF(IFLIN.EQ.1) CYCLE
               BBOT = ACLNNDS(NH-NODES,5)
               IF(HNEW(IUPS).GT.(BBOT-EPSILON))THEN !OTHERWISE DKDHC IS ZERO FOR THE CONNECTION
                 DKDHC(IIS) = AKRC(IIS)
                 HD=HNEW(IUPS)+ EPSILON
+                ICLN = NH-NODES
+                IC = ACLNNDS(ICLN,2)
                 CALL CLNP (IC,PERIF)
                 CALL CLNPW (ICLN,HD,PERIW)
                 THCK = PERIW/PERIF

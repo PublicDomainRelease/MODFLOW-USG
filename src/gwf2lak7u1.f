@@ -452,7 +452,7 @@ C1A1----READ INITIAL CONDITIONS FOR ALL LAKES (ONLY READ ONCE)
                  ELSE
                    IF(ISS.NE.0) READ (IN,'(3F10.4)') STAGES(LM),
      1              SSMN(LM),SSMX(LM)
-                   IF(ISS.EQ.0) READ (IN,'(3F10.4)') STAGES(LM)
+                   IF(ISS.EQ.0) READ (IN,'(F10.4)') STAGES(LM)
                  END IF
                ELSE
                  IF ( IRDTAB.GT.0 ) THEN
@@ -623,8 +623,8 @@ C   IDENTIFY LAKE BORDER CELLS, ASSIGN CELL TYPE ID'S, COMPUTE AND
 C     ASSIGN LAKE-AQUIFER INTERFACE CONDUCTANCES.
 C
       M = 0
-      DO 180 I=1,NCOL
       DO 180 J=1,NROW
+      DO 180 I=1,NCOL
       K = 1
       N = (K-1)*NROW*NCOL + (J-1)*NCOL + I
       IF(LKARR1(N).EQ.0) GO TO 150
@@ -642,6 +642,9 @@ C
 C   VERTICAL LAKEBED INTERFACE (TYPE 0) DETECTED
 C
   145 M = M + 1
+      ILAKE(1,M) = N
+      ILAKE(2,M) = K
+      ILAKE(3,M) = I
       IF(M.LE.MXLKND) GO TO 147
       WRITE(IOUT,149) I,J,K
   149 FORMAT(/1X,'MAXIMUM NUMBER OF GRID CELLS ADJACENT TO LAKES HAS BEE
@@ -669,8 +672,13 @@ C
       END IF
       ILAKE(4,M) = LID
       ILAKE(5,M) = 6
-      ILAKE(6,M) = NM1
-      BEDLAK(M) = BDLKN1(NM1)
+      IF ( K.GT.1 ) THEN
+        ILAKE(6,M) = NM1
+        BEDLAK(M) = BDLKN1(NM1)
+      ELSE
+        ILAKE(6,M) = N
+        BEDLAK(M) = BDLKN1(N)
+      END IF
       IF(K.EQ.NLAY.AND.LKARR1(N).NE.0) BEDLAK(M) = 0.0
       BGAREA(LID) = BGAREA(LID) + DELC(J)*DELR(I)
       WRITE(IOUT,5) K,J,I,(ILAKE(I1,M),I1=4,5), BEDLAK(M)
@@ -789,23 +797,28 @@ C   SET LAKE BOTTOM ELEVATIONS
   295 BOTTMS(LK) = 999999
 C
       DO 350 II=1,LKNODE
-      N = ILAKE(1,II)
-      K = ILAKE(2,II)
-C   ILAKE(6,II) is the connecting node
-      NTYP = ILAKE(6,II)
-      IF(N - NTYP.EQ.NROW*NCOL) THEN
+        N = ILAKE(1,II)
+        K = ILAKE(2,II)
         LAKE = ILAKE(4,II)
-        IF(K.GT.1) BOTLK = BOT(N-NROW*NCOL)
-        IF(K.EQ.1.OR.K.EQ.NLAY.AND.LKARR1(N).GT.0) BOTLK = BOT(N)
-        IF(BOTLK.LT.BOTTMS(LAKE)) BOTTMS(LAKE) = BOTLK
-      END IF
+        IF ( NLAY.GT.1 ) THEN   !RGN added test 5/28/2013
+C   ILAKE(6,II) is the connecting node
+          NTYP = ILAKE(6,II)
+          IF(N - NTYP.EQ.NROW*NCOL) THEN
+            IF(K.GT.1) BOTLK = BOT(N-NROW*NCOL)
+            IF(K.EQ.1.OR.K.EQ.NLAY.AND.LKARR1(N).GT.0) BOTLK = BOT(N)
+            IF(BOTLK.LT.BOTTMS(LAKE)) BOTTMS(LAKE) = BOTLK
+          END IF
+        ELSE
+          BOTLK = BOT(N)
+          IF(BOTLK.LT.BOTTMS(LAKE)) BOTTMS(LAKE) = BOTLK
+        END IF
   350 CONTINUE
 C
 C-- COMPUTE AND PRINT STAGE/VOLUME TABLES WHEN MORE THAN ONE LAYER
 Cdep  revised print statement to include stage/area tables
 C
       IF ( IRDTAB.EQ.0 ) THEN
-      IF(NLAY.EQ.1) GO TO 1331
+!      IF(NLAY.EQ.1) GO TO 1331   !RGN Removed to support single layer models 5/28/2013
       DO 1330 L1=1,NLAKES
       WRITE(IOUT,1306) L1
 Cdep  revised print statement to include area
@@ -825,12 +838,12 @@ Cdep  revised print statement to include area
 Cdep Revised estimate of DTHK to be thickness of top most
 C     layer 6/09/2009
       IF(TOP(NT).GT.TOPMST) TOPMST = TOP(NT)   ! Changed BOT to TOP RGN
-      DTHK = TOP(NT) - BOT(NT)
-      IF (DTHK.LE.GTSDPH) THEN
-        TOPMST = BOT(NT)+DTHK
-      ELSE
-        TOPMST = BOT(NT)+GTSDPH
-      END IF
+!      DTHK = TOP(NT) - BOT(NT)
+!      IF (DTHK.LE.GTSDPH) THEN
+!        TOPMST = BOT(NT)+DTHK
+!      ELSE
+!        TOPMST = BOT(NT)+GTSDPH
+!      END IF
  1340 CONTINUE
       TBNC = (TOPMST-BOTTMS(L1))/150.0
 Cdep Revised looping for computing lake stage, volume,
@@ -864,16 +877,17 @@ Cdep   WRITE(IOUT,1315) TBELV, EVOL
               END DO FINDBOT
               N = (K-1)*NROW*NCOL + (J-1)*NCOL + I
               BOTIJ = TOP(N)
+              IF ( NLAY==1 ) BOTIJ = BOT(N)  !RGN support for single layer models 5/28/2013
               IF(INC.EQ.1) THEN
                 IF(TBELV+1.0E-04.GT.BOTIJ) THEN
                   AREATABLE(INC,L1)=AREATABLE(INC,L1)+DELC(J)*DELR(I)
                   DEPTHTABLE(INC,L1)=TBELV
                 END IF
               ELSE
-                IF (TBELV-BOTIJ.GT.0.0) THEN
+                IF (TBELV-BOTIJ.GT.1.0E-03) THEN
                   AREATABLE(INC,L1)=AREATABLE(INC,L1)+DELC(J)*DELR(I)
                   DEPTHTABLE(INC,L1)=TBELV
-                  IF(ABS(TBELV-BOTIJ).GT.1.0E-04) THEN
+                  IF(ABS(TBELV-BOTIJ).GT.1.0E-03) THEN
                     VOLUMETABLE(INC,L1)=VOLUMETABLE(INC,L1)+
      +                                (DELC(J)*DELR(I))*TBNC
                   END IF
@@ -1011,11 +1025,16 @@ C      WRITE (IOUTS,'(/)')
   300 CONTINUE
       WRITE (IOUT,'(/)')
 C
-C--  Define Initial Lake Volume & Initialize Cumulative Budget Terms
+C------Define Initial Lake Volume & Initialize Cumulative Budget Terms
       IF(KKPER.EQ.1) THEN
-         DO 8400 LK=1,NLAKES
- 8400    VOL(LK)=0.0
-         DO 8450 LK=1,NLAKES
+!dep revised calculation of initial lake volume July 2009
+        STGINIT=0.0D0
+        DO 8400 LK=1,NLAKES
+             STGINIT=STAGES(LK)
+             VOL(LK)=VOLTERP(STGINIT,LK)
+             VOLINIT(LK)=VOL(LK)
+ 8400   CONTINUE
+        DO 8450 LK=1,NLAKES
              CUMPPT(LK)=0.0
              CUMEVP(LK)=0.0
              CUMRNF(LK)=0.0
@@ -1025,27 +1044,7 @@ C--  Define Initial Lake Volume & Initialize Cumulative Budget Terms
              CUMSWO(LK)=0.0
              CUMWDR(LK)=0.0
              CUMFLX(LK)=0.0
- 8450    CONTINUE
-            DO 8900 L=1,LKNODE
-               NL=ILAKE(1,L)
-               IL=ILAKE(2,L)
-               IJ = NL - (IL-1)*NCOL*NROW
-               IR = (IJ-1)/NCOL + 1
-               IC = IJ - (IR-1)*NCOL
-               LAKE=ILAKE(4,L)
-C  ILAKE(5,L) is the connecting node
-               ITYPE = ILAKE(5,L)
-               IF(NL-ITYPE.NE.NODLAY(1)) GO TO 8900
-               IF(IL.GT.1) BOTLK = BOT(NL - NROW*NCOL)
-               IF(IL.EQ.NLAY.AND.LKARR1(NL).GT.0)
-     1            BOTLK = BOT(NL)
-               IF(STAGES(LAKE).GT.BOTLK) THEN
-                  AREA1 = DELR(IC)*DELC(IR)
-                  VOL(LAKE)=VOL(LAKE)+(STAGES(LAKE)-BOTLK)*AREA1
-cgage
-                  VOLINIT(LAKE)=VOL(LAKE)
-               ENDIF
- 8900       CONTINUE
+ 8450   CONTINUE
       ENDIF
 
  900  IF (IUNITBCF.GT.0) THEN  ! rsr, moved if block from main
@@ -1243,9 +1242,12 @@ C
 C   IDENTIFY LAKE BORDER CELLS, ASSIGN CELL TYPE ID'S, COMPUTE AND
 C     ASSIGN LAKE-AQUIFER INTERFACE CONDUCTANCES.
 C
+      NLN = 0
       M = 0
+      LID = 0
       DO 180 NL=1,NODLAY(1)
       K = 1
+      NLN = NL
       IF(LKARR1(NL).EQ.0) GO TO 150
       IF(NLAY.EQ.1) GO TO 145
 C   Keep searching in vertical direction until non-lake cell is found, and define
@@ -1270,23 +1272,31 @@ C
   147 ILAKE(1,M) = NLN
       ILAKE(2,M) = K
       ILAKE(3,M) = 0
-      IF(K.GT.1.AND.LKARR1(NLN).EQ.0) LID = LKARR1(NLN-NODLAY(1))
+      IF (LKARR1(NLN).EQ.0) LID = LKARR1(NLN-NODLAY(1))
       IF(LKARR1(NLN).NE.0) LID = LKARR1(NLN)
-      ILAKE(4,M) = LID
-      ILAKE(5,M) = 6
       ILAKE(6,M) = NLN - NODLAY(1)
-      BEDLAK(M) = BDLKN1(NLN-NODLAY(1))
-      IF(K.EQ.NLAY.AND.LKARR1(NLN).NE.0) BEDLAK(M) = 0.0
+      IF(K.EQ.NLAY.AND.LKARR1(NLN).NE.0) THEN
+        BEDLAK(M) = 0.0
+      ELSE
+        BEDLAK(M) = BDLKN1(NLN-NODLAY(1))
+      END IF
       BGAREA(LID) = BGAREA(LID) + AREA(NLN)
+      ILAKE(5,M) = 6
+      IF ( LKARR1(NLN).EQ.0 ) THEN
+        ILAKE(4,M) = LKARR1(NL)
+      ELSE
+        ILAKE(4,M) = LKARR1(NLN)
+      END IF
+      IF(LKARR1(NLN).NE.0) GO TO 180
       WRITE(IOUT,5) ILAKE(1,M),ILAKE(2,M),(ILAKE(I1,M),I1=4,5),BEDLAK(M)
 5     FORMAT(4I10,10X,F10.5)
-      IF(LKARR1(NLN).NE.0) GO TO 180
 C
 C   SEARCH FOR CELL(S) ADJACENT TO LAKE
 C
   150 K2 = K
       DO 175 K1=K2,NLAY
          NL1 = NL + (K1-1)*NODLAY(1)
+!         IF(LKARR1(NL1).EQ.0) CYCLE
 C
          I1 = IA(NL1)+1
          I2 = IA(NL1+1)-1
@@ -1318,7 +1328,7 @@ C               CELL LATERALLY ADJACENT TO LAKE DETECTED
             BEDLAK(M) = BDLKN1(NL)
  3162       CONTINUE
             WRITE(IOUT,6) ILAKE(1,M),ILAKE(2,M),
-     *          (ILAKE(4,M),ILAKE(6,M)), BEDLAK(M)
+     *           ILAKE(4,M),ILAKE(6,M), BEDLAK(M)
            ENDIF
          ENDDO
   175 CONTINUE
@@ -1335,12 +1345,17 @@ C
       DO 350 II=1,LKNODE
       N = ILAKE(1,II)
       K = ILAKE(2,II)
+      LAKE = ILAKE(4,II)
+      IF ( NLAY.GT.1 ) THEN
 C   ILAKE(6,II) is the connected lake node
-      NTYP = ILAKE(6,II)
-      IF(N - NTYP.EQ.NODLAY(1)) THEN
-        LAKE = ILAKE(4,II)
-        IF(K.GT.1) BOTLK = BOT(N-NODLAY(1))
-        IF(K.EQ.NLAY.AND.LKARR1(N).GT.0) BOTLK = BOT(N)
+        NTYP = ILAKE(6,II)
+        IF(N - NTYP.EQ.NODLAY(1)) THEN
+          IF(K.GT.1) BOTLK = BOT(N-NODLAY(1))
+          IF(K.EQ.NLAY.AND.LKARR1(N).GT.0) BOTLK = BOT(N)
+          IF(BOTLK.LT.BOTTMS(LAKE)) BOTTMS(LAKE) = BOTLK
+        END IF
+      ELSE
+        BOTLK = BOT(N)
         IF(BOTLK.LT.BOTTMS(LAKE)) BOTTMS(LAKE) = BOTLK
       END IF
   350 CONTINUE
@@ -1348,7 +1363,7 @@ C
 C-- COMPUTE AND PRINT STAGE/VOLUME TABLES WHEN MORE THAN ONE LAYER
 Cdep  revised print statement to include stage/area tables
 C
-      IF(NLAY.EQ.1) GO TO 1331
+!      IF(NLAY.EQ.1) GO TO 1331 !RGN Removed to support single layer models 5/28/2013
       IF ( IRDTAB.EQ.0 ) THEN
         DO 1330 L1=1,NLAKES
           WRITE(IOUT,1306) L1
@@ -1368,11 +1383,11 @@ Cdep Revised estimate of DTHK to be thickness of top most
 C     layer 6/09/2009
             IF(TOP(I).GT.TOPMST) TOPMST = TOP(I)
             DTHK = TOP(I) - BOT(I)
-            IF (DTHK.LE.GTSDPH) THEN
-              TOPMST = BOT(I)+DTHK
-            ELSE
-              TOPMST = BOT(I)+GTSDPH
-            END IF
+!            IF (DTHK.LE.GTSDPH) THEN
+!              TOPMST = BOT(I)+DTHK
+!            ELSE
+!              TOPMST = BOT(I)+GTSDPH
+!            END IF
  1340     CONTINUE
           TBNC = (TOPMST-BOTTMS(L1))/150.0
 Cdep Revised looping for computing lake stage, volume,
@@ -1408,6 +1423,7 @@ Cdep   WRITE(IOUT,1315) TBELV, EVOL
               IF (LAKEFLG.EQ.1) THEN
                 CALL FIRST_ACTIVE_BELOW2(NN)
                 BOTIJ = TOP(NN)
+                IF ( NLAY==1 ) BOTIJ = BOT(NN)  !RGN support for single layer models 5/28/2013
                 IF(INC.EQ.1) THEN
                   IF(TBELV+1.0E-04.GT.BOTIJ) THEN
                     AREATABLE(INC,L1)=AREATABLE(INC,L1)+AREA(NN)
@@ -1686,10 +1702,11 @@ C   SPECIFICATIONS:
 C
 C-----------------------------------------------------------------------
       USE GWFLAKMODULE, ONLY: LKNODE, ILAKE, STGOLD
-      USE GLOBAL,       ONLY: IBOUND, BOT,NODLAY
+      USE GLOBAL,       ONLY: IBOUND, BOT,NODLAY,NLAY
 C-----------------------------------------------------------------------
 
       IF(LKNODE.EQ.0) RETURN
+      IF (NLAY.EQ.1) RETURN
       DO 10 L=1,LKNODE
 C  ILAKE(6,L) is the connecting node
       ITYPE = ILAKE(6,L)
@@ -1772,7 +1789,7 @@ Cdep  added double precision variables
 !      PARAMETER(CLOSEZERO = 1.0E-07)
 C     ------------------------------------------------------------------
       CLOSEZERO = 1.0D-09
-      DLSTG = 0.00001
+      DLSTG = 0.00001D0
       SURFDPTH = DBLE(SURFDEPTH)
 
 C1------IF LKNODE<=0 THERE ARE NO LAKE NODES. RETURN.
@@ -3527,6 +3544,7 @@ C
       DO 350 II=1,LKNODE
       N = ILAKE(1,II)
       K = ILAKE(2,II)
+      IF ( N.GT.0 ) THEN
       IF(IUNSTR.EQ.0)THEN
         IJ = N - (K-1)*NCOL*NROW
         J = (IJ-1)/NCOL + 1   !CONVENTION IS DIFFERENT - ROW IS J AND COL IS I
@@ -3643,6 +3661,7 @@ C
      1        BEDLAK(II),CNDFC1,CNDFC2,CNDFCT(II)
           ENDIF
         END IF
+      END IF
       END IF
   350 CONTINUE
 C
@@ -3848,7 +3867,10 @@ C          to "FUNCTION"
           IFLG = 1
         END IF
         I = I + 1
-        IF( I.GT.150 ) IFLG = 1
+        IF( I.GT.150 ) THEN
+          IFLG = 1 
+          AREA = AREATABLE(151,LN)
+        END IF
       END DO
       FINTERP = AREA
       RETURN
@@ -3920,7 +3942,10 @@ C          OF LAKE STAGE TO CACULATE LAKE VOLUME.
           IFLG = 1
         END IF
         I = I + 1
-        IF( I.GT.150 ) IFLG = 1
+        IF( I.GT.150 ) THEN
+          IFLG = 1 
+          VOLUME = VOLUMETABLE(151,LN)
+        END IF
       END DO
       VOLTERP = VOLUME
       IF ( VOLTERP.LT.TOLF2 ) VOLTERP = TOLF2
@@ -3956,7 +3981,10 @@ C          OF LAKE VOLUME TO CACULATE LAKE STAGE.
           IFLG = 1
         END IF
         I = I + 1
-        IF( I.GT.150 ) IFLG = 1
+        IF( I.GT.150 ) THEN
+          IFLG = 1 
+          STGTERP= 0.0
+        END IF
       END DO
       RETURN
       END FUNCTION STGTERP
@@ -4006,7 +4034,7 @@ C         ADDED 5/16/2006-- changed 12/2007 from "DOUBLE PRECISION FUNCTION"
 C          to "FUNCTION"
       USE GWFSFRMODULE, ONLY: SLKOTFLW, DLKSTAGE
       DOUBLE PRECISION STAGE, OUTFLOW, FOLD
-      TOLF2=1.0E-7
+      TOLF2=1.0E-9
       IF (STAGE.GT.DLKSTAGE(200,LSEG))THEN
         OUTFLWTERP =  SLKOTFLW(200,LSEG)
         RETURN
@@ -4014,7 +4042,7 @@ C          to "FUNCTION"
       IFLG = 0
       I = 1
       DO WHILE ( IFLG.EQ.0 )
-        FOLD=ABS(STAGE-DLKSTAGE(I,LSEG))
+        FOLD=DABS(STAGE-DLKSTAGE(I,LSEG))
         IF (FOLD .LE. TOLF2) THEN
           OUTFLOW=SLKOTFLW(I,LSEG)
           IFLG = 1
@@ -4043,7 +4071,7 @@ C
       IMPLICIT NONE
       DOUBLE PRECISION DSTAGE,Botlake,Splakout, s, aa, ad, b, x, y, dy
       FXLKOT_TERP = 0.0D0
-      s = 1.0
+      s = 2.0
       x = DSTAGE-Botlake
       aa = -1.0d0/(s**2.0d0)
       ad = -2.0D0/(s**2.0d0)
@@ -4303,7 +4331,7 @@ C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL,      ONLY:IBOUND,IA,JA,JAS,NODLAY,IVC,IVSD,NODES
 C----------------------------------------------
-      IF(IVSD.EQ.-1)THEN
+      IF(IVSD.EQ.-1 .AND. NODES.GT.NODLAY(1))THEN
 C-------VERTICALLY ADJACENT NODE BELOW IS N + NNDLAY
         NNDLAY = NODLAY(1)
 3       CONTINUE

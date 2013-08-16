@@ -1,5 +1,5 @@
 # MODFLOW2005 Basic Package
-#MODFLOW Data Set Created by Groundwater Vistas
+#
 #   
 FREE
 constant 1 -1     IBOUND Layer   1

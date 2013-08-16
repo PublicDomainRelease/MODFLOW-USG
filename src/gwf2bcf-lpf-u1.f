@@ -1776,119 +1776,6 @@ C
 C11----RETURN.
       RETURN
       END
-      SUBROUTINE GWF2BCFU1BDCH(KSTP,KPER)
-C     ******************************************************************
-C     COMPUTE FLOW FROM CONSTANT-HEAD CELLS
-C     ******************************************************************
-C
-C     SPECIFICATIONS:
-C     ------------------------------------------------------------------
-      USE GLOBAL, ONLY:NCOL,NROW,NLAY,IBOUND,HNEW,BUFF,ITRNSP,NOVFC,
-     1 TOP,IOUT,NODES,NEQS,NODLAY,IA,JA,JAS,IUNSTR,IVC,ISYM,INCLN
-      USE CLN1MODULE, ONLY: NCLNNDS,ICLNCB
-      USE GWFBASMODULE,ONLY:MSUM,VBVL,VBNM,DELT,PERTIM,TOTIM,ICBCFL,
-     1                      ICHFLG
-      USE GWFBCFMODULE,ONLY:IBCFCB,LAYCON
-      USE GWTBCTMODULE, ONLY: CBCH
-      USE SMSMODULE, ONLY: AMATFL
-C
-      DOUBLE PRECISION HD,CHIN,CHOUT,XX1,TMP,RATE,CHCH1,HDIFF,
-     *  X1,CIN,COUT
-C     ------------------------------------------------------------------
-C
-C1------SET IBD TO INDICATE IF CELL-BY-CELL BUDGET VALUES WILL BE SAVED.
-      IBD=0
-      IF(IBCFCB.LT.0 .AND. ICBCFL.NE.0) IBD=-1
-      IF(IBCFCB.GT.0) IBD=ICBCFL
-      IF(ITRNSP.GT.0.AND.IBD.EQ.0) IBD = 999
-C      IF(IBD.EQ.0) RETURN
-C
-C2------CLEAR BUDGET ACCUMULATORS.
-      ZERO=0.
-      CHIN=ZERO
-      CHOUT=ZERO
-      IBDLBL=0
-C
-C3------CLEAR BUFFER.
-      DO 5 N=1,NEQS
-        BUFF(N)=ZERO
-5     CONTINUE
-C
-C4------LOOP THROUGH EACH CELL AND CALCULATE FLOW INTO MODEL FROM EACH
-C4------CONSTANT-HEAD CELL.
-      DO 200 N=1,NEQS
-C
-C5------IF CELL IS NOT CONSTANT HEAD SKIP IT & GO ON TO NEXT CELL.
-        IF (IBOUND(N).GE.0)GO TO 200
-C
-C5A-------FIND LAYER NUMBER AND LAYCON FOR SUBSURFACE NODES
-        IF(N.LE.NODES)THEN
-          DO K=1,NLAY
-            NNDLAY = NODLAY(K)
-            NSTRT = NODLAY(K-1)+1
-            LC=LAYCON(K)
-            IF(N.GE.NSTRT.AND.N.LE.NNDLAY) GO TO 22
-          ENDDO
-22        CONTINUE
-        ENDIF
-C
-C6------CLEAR VALUES FOR FLOW RATE THROUGH EACH FACE OF CELL.
-        X1=ZERO
-        CHCH1=ZERO
-        RATE = ZERO
-C
-C7------CALCULATE FLOW THROUGH CONNECTING FACES.
-        DO 30 II = IA(N)+1,IA(N+1)-1
-          JJ = JA(II)
-C
-C7A-------IF THERE IS NO FLOW TO CALCULATE THROUGH THIS FACE, THEN GO ON
-C7A-------TO NEXT FACE.  NO FLOW OCCURS TO AN
-C7A-------ADJACENT NO-FLOW CELL, OR TO AN ADJACENT CONSTANT-HEAD CELL.
-          IF(IBOUND(JJ).EQ.0) GO TO 30
-          IF(IBOUND(JJ).LT.0 .AND. ICHFLG.EQ.0) GO TO 30
-          IIS = JAS(II)
-          IF(JJ.LT.N.AND.IVC(IIS).EQ.1)THEN  !VERTICAL DIRECTION UP
-            HD = HNEW(N)
-            IF(LC.NE.3 .AND. LC.NE.2) GO TO 122
-            IF(NOVFC.EQ.1) GO TO 122
-            TMP=HD
-            IF(TMP.LT.TOP(N)) HD=TOP(N)
- 122        HDIFF = HD - HNEW(JJ)
-          ELSEIF(IVC(IIS).EQ.1)THEN !VERTICAL DIRECTION DOWN
-            HD=HNEW(JJ)
-            IF(LAYCON(K+1).NE.3 .AND. LAYCON(K+1).NE.2) GO TO 123 !CSP 2 SHOULD BE 1
-            IF(NOVFC.EQ.1) GO TO 123
-            TMP=HD
-            IF(TMP.LT.TOP(JJ)) HD=TOP(JJ)
-123         HDIFF=HNEW(N)-HD
-          ELSE ! HORIZONTAL DIRECTION OR CONDUIT-NODE CONNECTION
-            HDIFF = HNEW(N) - HNEW(JJ)
-          ENDIF
-C
-C7B-------CALCULATE FLOW THROUGH THIS FACE INTO THE ADJACENT CELL.
-          CHCH1= HDIFF*AMATFL(II)
-          RATE = RATE + CHCH1
-          IF(IBOUND(JJ).LT.0.AND. ICHFLG.EQ.0) GO TO 30
-          X1 = CHCH1
-          XX1=X1
-C
-C7C--------ACCUMULATE POSITIVE AND NEGATIVE FLOW.
-          IF (X1.LT.ZERO) THEN
-            CHOUT=CHOUT-XX1
-          ELSE
-            CHIN=CHIN+XX1
-          END IF
-   30   CONTINUE
-C
-C8--------STORE SUM IN BUFFER.
-        BUFF(N)=RATE
-        IF(ITRNSP.GT.0) CBCH(N) = RATE
-C
-  200 CONTINUE
-C
-C9------RETURN.
-      RETURN
-      END 
 C      
       SUBROUTINE GWF2BCFU1BDCHWR(KSTP,KPER)
 C     ******************************************************************
@@ -1898,7 +1785,7 @@ C
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL, ONLY:NCOL,NROW,NLAY,IBOUND,HNEW,BUFF,ITRNSP,NOVFC,
-     1 TOP,IOUT,NODES,NEQS,NODLAY,IA,JA,JAS,IUNSTR,IVC,ISYM,INCLN
+     1 TOP,IOUT,NODES,NEQS,NODLAY,IA,JA,JAS,IUNSTR,IVC,ISYM,INCLN,FLOWJA
       USE GWFBASMODULE,ONLY:MSUM,VBVL,VBNM,DELT,PERTIM,TOTIM,ICBCFL,
      1                      ICHFLG
       USE GWFBCFMODULE,ONLY:IBCFCB,LAYCON
@@ -1920,6 +1807,12 @@ C1------SET IBD TO INDICATE IF CELL-BY-CELL BUDGET VALUES WILL BE SAVED.
 C      IF(IBD.EQ.0) RETURN
       CHIN = 0.0
       CHOUT = 0.0
+C
+C1A-----CLEAR BUFF
+      DO N=1,NODES
+          BUFF(N)=0.
+      ENDDO
+C
 C--------------------------------------------------------------------------
 C2------GWF DOMAIN
 C---------------------------------------------------------------------------
@@ -1948,13 +1841,18 @@ C
 C4------IF CELL IS NOT CONSTANT HEAD SKIP IT & GO ON TO NEXT CELL.
         IF (IBOUND(N).GE.0)GO TO 200
 C
-C5--------GET RATE FROM BUFFER
-        RATE = BUFF(N)
-        IF (RATE.LT.0.0) THEN
-            CHOUT=CHOUT-RATE
-          ELSE
-            CHIN=CHIN+RATE
-          END IF
+C5--------ACCUMULATE INDIVIDUAL CHD FLOWS FROM FLOWJA ARRAY
+          RATE=0.0
+          DO II = IA(N)+1,IA(N+1)-1
+            X1=FLOWJA(II)
+            XX1=X1
+            IF(X1.LT.ZERO) THEN
+              CHOUT=CHOUT-XX1
+            ELSE
+              CHIN=CHIN+XX1
+            ENDIF
+            RATE=RATE+X1
+          ENDDO
 C
 C6--------PRINT THE FLOW FOR THE CELL IF REQUESTED.
         IF(IBD.LT.0) THEN
@@ -1989,6 +1887,11 @@ C7------IF SAVING CELL-BY-CELL FLOW IN LIST, WRITE FLOW FOR CELL.
           ENDIF
 C--------------------------------------------------------------
         ENDIF
+C
+C8--------STORE SUM IN BUFFER.
+        BUFF(N)=RATE
+        IF(ITRNSP.GT.0) CBCH(N) = RATE
+C
   200 CONTINUE
 C--------------------------------------------------------------------------
 C
@@ -2027,7 +1930,7 @@ C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL, ONLY:NCOL,NROW,NLAY,IBOUND,HNEW,BUFF,NODLAY,NEQS,
      1  TOP,IOUT,NODES,NJA,IA,JA,JAS,IUNSTR,IVC,ISYM,ITRNSP,issflg,
-     1  Sn,So,INGNC,INGNC2,INGNCn,TMPA,NOVFC,iunsat
+     1  Sn,So,INGNC,INGNC2,INGNCn,FLOWJA,NOVFC,iunsat
       USE GWFBASMODULE,ONLY:ICBCFL,DELT,PERTIM,TOTIM,ICHFLG
       USE GWFBCFMODULE,ONLY:IBCFCB,LAYCON
       USE GWTBCTMODULE, ONLY: CBCF
@@ -2042,11 +1945,11 @@ C1------RETURN IF FLOWS ARE NOT BEING SAVED OR RETURNED.
       IBD=0
       IF(IBCFCB.GT.0) IBD=ICBCFL
       IF(ITRNSP.GT.0.AND.IBD.EQ.0) IBD = 999
-      IF(IBD.EQ.0) RETURN
+!      IF(IBD.EQ.0) RETURN
 C
 C2-----INITIALIZE FLOW ACCUMULATION ARRAY
       DO 310 IJ=1,NJA
-        TMPA(IJ)=ZERO
+        FLOWJA(IJ)=ZERO
   310 CONTINUE
 C
 C3------FOR EACH CELL CALCULATE FLOW THRU ADJACENT FACE & STORE IN BUFFER.
@@ -2082,7 +1985,7 @@ C5A-------TO NEXT FACE.
 C
 C5B-------CALCULATE FLOW THROUGH THIS FACE INTO THE ADJACENT CELL.
   122     HDIFF=HNEW(N)-HD
-          TMPA(II)= HDIFF*AMATFL(II)
+          FLOWJA(II)= HDIFF*AMATFL(II)
    30   CONTINUE
 C
   200 CONTINUE
@@ -2099,7 +2002,7 @@ C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL, ONLY:NCOL,NROW,NLAY,IBOUND,HNEW,BUFF,NODLAY,NEQS,
      1  TOP,IOUT,NODES,NJA,IA,JA,JAS,IUNSTR,IVC,ISYM,ITRNSP,issflg,
-     1  Sn,So,INGNC,INGNC2,INGNCn,TMPA,JAFL,NJAG,iunsat
+     1  Sn,So,INGNC,INGNC2,INGNCn,FLOWJA,JAFL,NJAG,iunsat
       USE GWFBASMODULE,ONLY:ICBCFL,DELT,PERTIM,TOTIM,ICHFLG
       USE GWFBCFMODULE,ONLY:IBCFCB,LAYCON
       USE GWTBCTMODULE, ONLY: CBCF
@@ -2107,7 +2010,7 @@ C     ------------------------------------------------------------------
 C
       CHARACTER*16 TEXT(4)
       DOUBLE PRECISION HD,TMP,HDIFF
-      REAL, DIMENSION(:),ALLOCATABLE  ::BUF(:,:),TMPB(:)
+      REAL, DIMENSION(:),ALLOCATABLE  ::FLOWGWS(:,:),FLOWJAG(:)
 C
       DATA TEXT(1),TEXT(2),TEXT(3),TEXT(4)
      1 /'FLOW RIGHT FACE ','FLOW FRONT FACE ','FLOW LOWER FACE ',
@@ -2128,7 +2031,7 @@ C2-----FILL FLOW TERM INTO SYMMETRIC CBCF ARRAY IF TRANSPORT IS ACTIVE
             JJ = JA(II)
             IIS = JAS(II)
             IF(JJ.LE.N) CYCLE ! FILL  UPPER TRIANGLE
-            IF(IIS.GT.0) CBCF(IIS) = TMPA(II)
+            IF(IIS.GT.0) CBCF(IIS) = FLOWJA(II)
           ENDDO
         ENDDO
       ENDIF
@@ -2137,14 +2040,14 @@ C
       IF(ITESTCBC.EQ.1)THEN
         write(iout,*)' fluxes are below for all faces from a node'
         do i=1,nodes
-          write(iout,66) (tmpa(ii),ii=ia(i),ia(i+1)-1)
+          write(iout,66) (FLOWJA(ii),ii=ia(i),ia(i+1)-1)
         enddo
   66    format(10e15.6)
       ENDIF
 C
-C3------RECORD CONTENTS OF BUFFER AND RETURN.
+C3------RECORD CONTENTS OF STRUCTURED GRID FLOWS AND RETURN.
       IF(IUNSTR.EQ.0)THEN
-        ALLOCATE(BUF(NODES,3))
+        ALLOCATE(FLOWGWS(NODES,3))
         DO 300 K=1,NLAY
           LC=LAYCON(K)
           NNDLAY = NODLAY(K)
@@ -2157,11 +2060,11 @@ C4---------CALCULATE FLOW THROUGH CONNECTING FACES FOR STRUCTURED GRID.
             IF(JJ.LE.N) CYCLE
             IIS = JAS(II)
             IF(IVC(IIS).EQ.1)THEN !LOWER LAYER
-              BUF(N,3) = TMPA(II)
+              FLOWGWS(N,3) = FLOWJA(II)
             ELSEIF(JJ.EQ.N+NCOL)THEN !FORWARD FACE
-              BUF(N,2) = TMPA(II)
+              FLOWGWS(N,2) = FLOWJA(II)
             ELSEIF(JJ.EQ.N+1)THEN !RIGHT FACE
-              BUF(N,1) = TMPA(II)
+              FLOWGWS(N,1) = FLOWJA(II)
             ELSEIF(JJ.GT.NODES)THEN ! MATRIX-TO-CONDUIT CONNECTION
 c             THIS CAN BE WRITTEN TO A SEPARATE FILE, BUT DIFFERENCE IN
 c             FLOW FROM ONE CONDUIT-NODE TO THE NEXT IS FLOW TO/FROM MATRIX.
@@ -2171,18 +2074,20 @@ c             FLOW FROM ONE CONDUIT-NODE TO THE NEXT IS FLOW TO/FROM MATRIX.
 C
         DO IDIR = 1,3
           IF(IBD.EQ.1) CALL UBUDSV(KSTP,KPER,TEXT(IDIR),IBCFCB,
-     1     BUF(1,IDIR),NCOL,NROW,NLAY,IOUT)
+     1     FLOWGWS(1,IDIR),NCOL,NROW,NLAY,IOUT)
           IF(IBD.EQ.2) CALL UBDSV1(KSTP,KPER,TEXT(IDIR),IBCFCB,
-     1     BUF(1,IDIR),NCOL,NROW,NLAY,IOUT,DELT,PERTIM,TOTIM,IBOUND)
+     1     FLOWGWS(1,IDIR),NCOL,NROW,NLAY,IOUT,DELT,PERTIM,TOTIM,IBOUND)
         ENDDO
-        DEALLOCATE(BUF)
+        DEALLOCATE(FLOWGWS)
 C
 C5--------SAVE FLOW THROUGH CONNECTING FACES FOR UNSTRUCTURED GRID.
       ELSE
         IF(IBD.NE.0)THEN
-C6------SAVE ONLY FOR GROUNDWATER NODES, SO COMPRESS OUT OTHER DOMAINS FROM TMPA
-          ALLOCATE(TMPB(NJAG))
-            TMPB = ZERO
+C6------SAVE ONLY FOR GROUNDWATER NODES, SO COMPRESS OUT OTHER DOMAINS FROM FLOWJA.
+C6------FLOWJA IS DEFINED AS POSITIVE OUT OF THE CELL, BUT HERE WE WRITE FLOWJAG
+C6------ACCORDING TO A CELL BALANCE, WHICH IS FLOW IS POSITIVE INTO A CELL.
+          ALLOCATE(FLOWJAG(NJAG))
+            FLOWJAG = ZERO
 C
           IJAG = 1
           DO N=1,NODES
@@ -2190,18 +2095,18 @@ C
               JJ = JA(II)
               JJG = JAFL(IJAG)
               IF(JJ.NE.JJG) CYCLE
-              TMPB(IJAG) = -TMPA(II)
+              FLOWJAG(IJAG) = -FLOWJA(II)
               IJAG = IJAG + 1
             ENDDO
           ENDDO
 C6B2------STORE UNSYMMETRIC CBC ARRAY IN FULL IA AND JA STRUCTURE FOR GW NODES
         IF(IBD.EQ.1)
-     1   CALL UBUDSVU(KSTP,KPER,TEXT(4),IBCFCB,TMPB(1),NJAG,IOUT,
+     1   CALL UBUDSVU(KSTP,KPER,TEXT(4),IBCFCB,FLOWJAG(1),NJAG,IOUT,
      1         PERTIM,TOTIM)
-        IF(IBD.EQ.2) CALL UBDSV1U(KSTP,KPER,TEXT(4),IBCFCB,TMPB(1),NJAG,
-     1     IOUT,DELT,PERTIM,TOTIM,IBOUND,NODES)
+        IF(IBD.EQ.2) CALL UBDSV1U(KSTP,KPER,TEXT(4),IBCFCB,FLOWJAG(1),
+     1         NJAG,IOUT,DELT,PERTIM,TOTIM,IBOUND,NODES)
         ENDIF
-        DEALLOCATE(TMPB)
+        DEALLOCATE(FLOWJAG)
       ENDIF
 c-----------------------------------------------------------------------------
 c-----finally, for transport, if iunsat=1 and steady-state, get Sn from So
@@ -3690,9 +3595,6 @@ C-----------------------------------------------------------------------
 C
       IF(IDEALLOC_HY.EQ.0)  DEALLOCATE(HK)
       DEALLOCATE(IBCFCB)
-      DEALLOCATE(IWDFLG)
-      DEALLOCATE(IWETIT)
-      DEALLOCATE(IHDWET)
       DEALLOCATE(WETFCT)
       DEALLOCATE(HDRY)
       DEALLOCATE(LAYCON)

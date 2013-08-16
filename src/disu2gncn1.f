@@ -553,224 +553,65 @@ C      SPECIFICATIONS:
 C     ------------------------------------------------------------------
 C
       USE GLOBAL,     ONLY:NODES,NEQS,NJA,IA,JA
-      USE GNCnMODULE,ONLY:NGNCn,ISYMGNCn,MXADJn
-      INTEGER, SAVE,    DIMENSION(:),ALLOCATABLE  ::IAT
-      INTEGER, SAVE,    DIMENSION(:),ALLOCATABLE  ::JAT
-      INTEGER, SAVE,    DIMENSION(:,:,:),ALLOCATABLE  ::IGFOUNDn
+      USE GNCNMODULE,ONLY:NGNCN,ISYMGNCN,MXADJN,GNCN
+      USE SPARSEMODULE
+      TYPE(SPARSEMATRIX) :: AMAT
+      INTEGER,ALLOCATABLE,DIMENSION(:) :: ROWMAXNNZ
 C
 C     ------------------------------------------------------------------
 C
-C1--------SKIP CHANGING MATRIX STRUCTURE IF SYMMETRIC MATRIX WITH RHS UPDATE
-      IF(ISYMGNCn.EQ.1) GO TO 10
+C1--------SKIP CHANGING MATRIX STRUCTURE IF SYMMETRIC MATRIX WITH 
+C1--------RHS UPDATE
+      IF(ISYMGNCN.EQ.1) GO TO 10
 C
-C2--------ALLOCATE AND FILL TEMPORARY IA AND JA ARRAYS FOR DOMAIN
-      ALLOCATE(IAT(NEQS+1))
-      ALLOCATE(JAT(NJA))
-      ALLOCATE(IGFOUNDn(NGNCn,MXADJn,2))
-      DO N=1,NEQS+1
-        IAT(N) = IA(N)
+C2--------STORE NUMBER OF CONNECTIONS IN ROWMAXNNZ AND USE TO 
+C2--------INITIALIZE AMAT
+      ALLOCATE(ROWMAXNNZ(NEQS))
+      DO N=1,NEQS
+          ROWMAXNNZ(N)=IA(N+1)-IA(N)
       ENDDO
-      DO IJA=1,NJA
-        JAT(IJA) = JA(IJA)
+      CALL AMAT%INIT(NEQS, NEQS, ROWMAXNNZ)
+      DEALLOCATE(ROWMAXNNZ)
+C
+C3-----ADD THE EXISTING IA/JA PATTERN TO AMAT
+      DO N=1,NEQS
+          DO JJ=IA(N),IA(N+1)-1
+              M=JA(JJ)
+              CALL AMAT%ADDCONNECTION(N,M,1)
+          ENDDO
       ENDDO
+C
+C4-----DEALLOCATE THE JA ARRAY
       DEALLOCATE(JA)
 C
-C3------CONVERT IA TO INDICATE CONNECTIONS PER ROW OF MATRIX
-      DO N=1,NEQS
-        IA(N) = IA(N+1) - IA(N)
+C5------ADD THE GNC CONNECTIONS TO AMAT.  FIRST M AND J AND THEN
+C5------N AND J.  THE LAST ARG IN THE ADDCONNECTION CALL MEANS
+C5------DUPLICATES ARE NOT STORED
+      DO IGNCN=1,NGNCN
+          N = GNCN(1,IGNCN)
+          M = GNCN(2,IGNCN)
+          DO IADJN=1,MXADJN
+              J=GNCN(2+IADJN,IGNCN)
+              CALL AMAT%ADDCONNECTION(M,J,1)
+              CALL AMAT%ADDCONNECTION(J,M,1)
+              CALL AMAT%ADDCONNECTION(N,J,1)
+              CALL AMAT%ADDCONNECTION(J,N,1)
+          ENDDO
       ENDDO
-C4------ADD GNCn CONNECTION TO IA
-      CALL SFILLIA_GNCn(IAT,JAT,NEQS,NJA,IGFOUNDn)
 C
-C5------RE-COMPUTE CUMULATIVE OF CONNECTIONS PER ROW IN IA
-      DO II=2,NEQS+1
-        IA(II) = IA(II) + IA(II-1)
-      ENDDO
-C-------IA(N+1) IS CUMULATIVE_IA(N) + 1
-      DO II=NEQS+1,2,-1
-        IA(II) = IA(II-1) + 1
-      ENDDO
-      IA(1) = 1
-C6------GET NEW NJA AND ALLOCATE NEW JA ACCORDINGLY
-      NJA = IA(NEQS+1) - 1
+C6------ALLOCATE JA AND FILL THE IA AND JA ARRAYS
+      NJA=AMAT%NNZ
       ALLOCATE(JA(NJA))
-      JA = 0
-C7------FILL BLOCK TERMS INTO JA ARRAY AS PER NEW IA
-      DO N=1,NEQS
-        IJA = IA(N)
-        DO IT = IAT(N),IAT(N+1)-1
-          JA(IJA) = JAT(IT)
-          IJA = IJA + 1
-        ENDDO
-      ENDDO
+      CALL AMAT%FILLIAJA(IA,JA,IERR)
 C
-C8------FILL JA TERMS FOR GNCn DOMAIN
-      CALL FILLJA_GNCn (IGFOUNDn)
-C9------DEALLOCATE TEMPORATY ARRAYS
-      DEALLOCATE(IAT,JAT,IGFOUNDn)
-C-----------------------------------------------------------------------------
-C10------PREPARE AND STORE ALPHA_BAR IN COEFFICIENT LOCATION IF ALPHA IS READ.
-C10------ALSO FIND AND STORE LOCATION OF NODE J IN ROWS N AND M.
+C7------DESTROY THE SPARSEROW MATRIX
+      CALL AMAT%DESTROY
+C
+C8------PREPARE AND STORE ALPHA_BAR IN COEFFICIENT LOCATION IF ALPHA IS READ.
+C8------ALSO FIND AND STORE LOCATION OF NODE J IN ROWS N AND M.
 10    CALL SGNCn2DISU1MC
-
-C11------RETURN
-      RETURN
-      END
-C ---------------------------------------------------------------------
-      SUBROUTINE SFILLIA_GNCn(IAT,JAT,NEQS,NJA,IGFOUNDn)
-C     ******************************************************************
-C     INCLUDE GNCn CONNECTIVITIES IN ROW INDICATOR ARRAY IA WHEN NEEDED
-C     ******************************************************************
 C
-C        SPECIFICATIONS:
-C     ------------------------------------------------------------------
-      USE GNCnMODULE,ONLY:NGNCn,GNCn,MXADJn
-      USE GLOBAL, ONLY: IA
-      INTEGER IAT(NEQS+1)
-      INTEGER JAT(NJA),IGFOUNDn(NGNCn,MXADJn,2)
-C     ------------------------------------------------------------------
-C
-C1------LOOP OVER ALL GNCn NODES
-      DO IFN = 1,NGNCn
-        ND2 = GNCn(2,IFN)
-        ND1 = GNCn(1,IFN)
-C1------FIND M (ND2)AND J1 (ND3) FOR EACH GNCn NODE IN LIST
-        DO IADJn = 1,MXADJn
-          ND3 = GNCn(2+IADJn,IFN)
-          IFOUND = 0
-          DO II=IAT(ND2),IAT(ND2+1)-1
-C2------------SEE IF ND2 AND ND3 ARE ALREADY CONNECTED IN PREVIOUS JA LIST
-            JJ = JAT(II)
-            IF(JJ.EQ.ND3)THEN
-              IFOUND = 1
-              GO TO 10
-            ENDIF
-          ENDDO
-10        CONTINUE
-C3----------SEE IF ND2 AND ND3 ARE CONNECTED IN PREVIOUS GHOST NODE LIST
-          DO JFN = 1,IFN-1
-            JD2 = GNCn(2,JFN)
-            DO JADJn = 1,MXADJn
-              JD3 = GNCn(2+JADJn,JFN)
-              IF((JD2.EQ.ND2.AND.JD3.EQ.ND3). OR.
-     1           (JD3.EQ.ND2.AND.JD2.EQ.ND3))THEN
-                IFOUND = 1
-                GO TO 20
-              ENDIF
-            ENDDO
-          ENDDO
-20        CONTINUE
-C
-C4--------SEE IF THE ND3 NODES ARE THE SAME - IF SO, CONNECTION WAS FOUND EARLIER
-          IF(IADJn.GT.1)THEN
-            DO JADJn = 1,IADJn-1
-              JD3 = GNCn(2+JADJn,IFN)
-              IF(JD3.EQ.ND3)THEN
-                IFOUND=1
-              ENDIF
-            ENDDO
-          ENDIF
-C-----------------------------------------------------------------------------
-C4----------SAVE IFOUND IN ARRAY IGFOUND FOR USE IN CONSTRUCTING JA
-          IGFOUNDn(IFN,IADJn,1) = IFOUND
-C5----------IF ND2 TO ND3 CONNECTION IS NOT FOUND, ADD THAT CONNECTION TO LIST
-          IF(IFOUND.EQ.0)THEN
-            IA(ND2) = IA(ND2) + 1
-            IA(ND3) = IA(ND3) + 1
-          ENDIF
-C-----------------------------------------------------------------------------
-C6----------DO SAME FOR ND1 TO ND3 CONNECTIONS
-C-----------------------------------------------------------------------------
-          IFOUND = 0
-          DO II=IAT(ND1),IAT(ND1+1)-1
-C12-----------SEE IF ND1 AND ND3 ARE ALREADY CONNECTED IN PREVIOUS JA LIST
-            JJ = JAT(II)
-            IF(JJ.EQ.ND3)THEN
-              IFOUND = 1
-              GO TO 30
-            ENDIF
-          ENDDO
-30        CONTINUE
-C13---------SEE IF ND1 AND ND3 ARE CONNECTED IN PREVIOUS GHOST NODE LIST
-          DO JFN = 1,IFN-1
-            JD1 = GNCn(1,JFN)
-            DO JADJn = 1,MXADJn
-              JD3 = GNCn(2+JADJn,JFN)
-              IF((JD1.EQ.ND1.AND.JD3.EQ.ND3). OR.
-     1           (JD3.EQ.ND1.AND.JD1.EQ.ND3))THEN
-                IFOUND = 1
-                GO TO 40
-              ENDIF
-            ENDDO
-          ENDDO
-40        CONTINUE
-C
-C14--------SEE IF THE ND3 NODES ARE THE SAME - IF SO, CONNECTION WAS FOUND EARLIER
-          IF(IADJn.GT.1)THEN
-            DO JADJn = 1,IADJn-1
-              JD3 = GNCn(2+JADJn,IFN)
-              IF(JD3.EQ.ND3)THEN
-                IFOUND=1
-              ENDIF
-            ENDDO
-          ENDIF
-C-----------------------------------------------------------------------------
-C14---------SAVE IFOUND IN ARRAY IGFOUND FOR USE IN CONSTRUCTING JA
-          IGFOUNDn(IFN,IADJn,2) = IFOUND
-C15---------IF ND1 TO ND3 CONNECTION IS NOT FOUND, ADD THAT CONNECTION TO LIST
-          IF(IFOUND.EQ.0)THEN
-            IA(ND1) = IA(ND1) + 1
-            IA(ND3) = IA(ND3) + 1
-          ENDIF
-C-----------------------------------------------------------------------------
-        ENDDO
-C-----------------------------------------------------------------------------
-      ENDDO
-C
-C21------RETURN
-      RETURN
-      END
-C
-C -----------------------------------------------------------------------
-      SUBROUTINE FILLJA_GNCn (IGFOUNDn)
-C     ******************************************************************
-C     FILL JA ARRAY FOR GHOST NODE CORRECTION CELLS
-C     ******************************************************************
-      USE GLOBAL, ONLY:JA,IA,NODES,NEQS
-      USE GNCnMODULE,ONLY:NGNCn,GNCn,MXADJn
-      INTEGER IGFOUNDn(NGNCn,MXADJn,2)
-C-----------------------------------------------------------------------
-C
-C1-------CHECK FOR ALL GNCn NODES
-C
-      DO IFN = 1,NGNCn
-         ND1 = GNCn(1,IFN)
-         ND2 = GNCn(2,IFN)
-C
-C2------FOR CONNECTION OF N2 TO CONTRIBUTING NODES J
-        DO IADJn = 1,MXADJn
-          IFOUND = IGFOUNDn(IFN,IADJn,1)
-          IF(IFOUND.EQ.0)THEN
-C2A----------IF GHOST NODE CONNECTION WAS NOT FOUND, MAKE CONNECTION
-             ND3 = GNCn(2+IADJn,IFN)
-            CALL FINDJA(ND2,ND3)
-            CALL FINDJA(ND3,ND2)
-          ENDIF
-C
-C--------------------------------------------------------------------
-C4----------DO SAME FOR CONNECTION OF N1
-C--------------------------------------------------------------------
-C5----------FOR CONNECTION OF N2 TO FIRST CONTRIBUTING NODE J1
-          IFOUND = IGFOUNDn(IFN,IADJn,2)
-          IF(IFOUND.EQ.0)THEN
-C5A----------IF GHOST NODE CONNECTION WAS NOT FOUND, MAKE CONNECTION
-            CALL FINDJA(ND1,ND3)
-            CALL FINDJA(ND3,ND1)
-          ENDIF
-C
-        ENDDO
-      ENDDO
-C7------RETURN
+C9------RETURN
       RETURN
       END
 C---------------------------------------------------------------------------
@@ -801,7 +642,7 @@ C
 C---------------------------------------------------------------------------
           IF(ISYMGNCn.EQ.0)THEN
 C4----------FIND LOCATION OF GHOST CELL J IN ROW N AND SAVE
-            DO II = IA(N1)+1,IA(N1+1)-1
+            DO II = IA(N1),IA(N1+1)-1
               JJ = JA(II)
               IF(JJ.EQ.N3)THEN
                 IRGNCn(1,IADJn,IG) = II
@@ -870,7 +711,7 @@ C     ******************************************************************
 C     FIRST, FILL CONTRIBUTING FACTORS FROM SAT CONDUCTANCES AND S_UPS. 
 C     FILL SECOND ORDER CORRECTION OF K ON UNCONFINED GHOST NODE TERMS
 C     ******************************************************************
-      USE GLOBAL, ONLY:JA,IA,NODES,NEQS,IVC,JAS
+      USE GLOBAL, ONLY:JA,IA,NODES,NEQS,IVC,JAS,IBOUND
       USE GNCnMODULE,ONLY:NGNCn,GNCn,LGNCn,I2Kn,IFLALPHAn,SATCn,MXADJn
       USE GWFBCFMODULE, ONLY: LAYCON
       REAL,    DIMENSION(:), ALLOCATABLE :: SATLOC
@@ -903,15 +744,21 @@ C4--------COMPUTE CONTRIBUTING FACTOR FOR ADJACENT CONTRIBUTING NODES
 C
 C-----------------------------------------------------------------------
 999   CONTINUE            
-C1-------RETURN IF SECOND ORDER TERM IS NOT REQUIRED
+C5-------RETURN IF SECOND ORDER TERM IS NOT REQUIRED
       IF(I2Kn.EQ.0) RETURN
 C
-C2------DO FOR EACH GNCn NODE
+C6------DO FOR EACH GNCn NODE
       DO IG=1,NGNCn
         ND1 = GNCn(1,IG)
         ND2 = GNCn(2,IG)
-C3------FIND LOCATION IN AMAT OF N2 IN ROW OF N1 AND
-C3------FIND IF CONNECTION OF N TO M IS VERTICAL OR HORIZONTAL
+C7-----SKIP ADJUSTMENTS IF ANY CONTRIBUTING NODE IS INACTIVE        
+        IF(IBOUND(N1).EQ.0.OR.IBOUND(N2).EQ.0) GO TO 11
+        DO IADJn = 1,MXADJn
+          N3 = GNCn(2+IADJn,IG)
+          IF(IBOUND(N3).EQ.0) GO TO 11
+        ENDDO
+C8------FIND LOCATION IN AMAT OF N2 IN ROW OF N1 AND
+C8------FIND IF CONNECTION OF N TO M IS VERTICAL OR HORIZONTAL
         DO II=IA(ND1)+1,IA(ND1+1)-1
           JJ = JA(II)
           IF(JJ.EQ.ND2)THEN
@@ -922,9 +769,9 @@ C3------FIND IF CONNECTION OF N TO M IS VERTICAL OR HORIZONTAL
         ENDDO
 10      CONTINUE
 C
-C4-------FOR HORIZONTAL CONNECTION
+C9-------FOR HORIZONTAL CONNECTION
         IF(IVD.EQ.0.OR.IVD.EQ.2)THEN
-C5----------COMPUTE GHOST K-VALUE AND HORIZONTAL CONDUCTANCE AS PER LAYCON
+C10---------COMPUTE GHOST K-VALUE AND HORIZONTAL CONDUCTANCE AS PER LAYCON
           K = LGNCn(IG)
           IF(LAYCON(K).EQ.3. OR.LAYCON(K).EQ.1) THEN
             IF(ND1.GT.NODES.OR.ND2.GT.NODES) CYCLE ! CORRECTION ON CLN ONLY FOR LAYCON=4
@@ -933,9 +780,10 @@ C5----------COMPUTE GHOST K-VALUE AND HORIZONTAL CONDUCTANCE AS PER LAYCON
             CALL SGNCn2BCFU1WDS4(IG,ND1,ND2,II,IIS)
           ENDIF
         ENDIF
+  11    CONTINUE
       ENDDO
 C
-C6------RETURN
+C11------RETURN
       RETURN
       END
 C -----------------------------------------------------------------------
@@ -1051,6 +899,9 @@ C2------CALCULATE SATURATED THICKNESS.
       BBOT=BOT(N)
       TTOP=TOP(N)
       TOTTHICK = TTOP - BBOT
+      IF(TOTTHICK.LT.1.E-10)THEN
+        TOTTHICK = 1.E-10
+      ENDIF
       CALL SAT_THIK(N,HD,TOTTHICK,BBOT,THCK)
 C
 C3------STORE UPSTREAM SATURATION VALUE IN SUPS.
@@ -1108,7 +959,7 @@ C     ******************************************************************
 C     ADJUST CBC FLUX FOR GHOST NODE TERMS
 C     ******************************************************************
       USE GLOBAL, ONLY:JA,IA,NODES,NEQS,IVC,JAS,ISYM,IBOUND,ICONCV,IOUT,
-     1                 HNEW,AMAT,TMPA
+     1                 HNEW,AMAT,FLOWJA
       USE GNCnMODULE,ONLY:NGNCn,GNCn,I2Kn,ISYMGNCn,MXADJn
       USE GWFBCFMODULE, ONLY: LAYCON
       DOUBLE PRECISION QNJ1,QMJ1,QNJ2,QMJ2,Cnm,ATERM,ALPHA,CORRECTnm,
@@ -1143,8 +994,8 @@ C
 C6-----------ADJUST FLUXES FROM RHS
             Cnm = AMAT(II)
             CORRECTnm = ATERM * Cnm
-            TMPA(II) = TMPA(II) - CORRECTnm
-            TMPA(ISYM(II)) = TMPA(ISYM(II)) + CORRECTnm
+            FLOWJA(II) = FLOWJA(II) - CORRECTnm
+            FLOWJA(ISYM(II)) = FLOWJA(ISYM(II)) + CORRECTnm
           ENDIF
         ENDDO
       ENDDO

@@ -20,7 +20,7 @@ C
 C-------ASSIGN VERSION NUMBER AND DATE
       CHARACTER*40 VERSION
       CHARACTER*10 MFVNAM
-      PARAMETER (VERSION='1.0.00 05/03/2013')
+      PARAMETER (VERSION='1.1.00 08/23/2013')
       PARAMETER (MFVNAM='-USG') !USG = Un-Structured Grids
 C
       CHARACTER*80 HEADNG(2)
@@ -289,9 +289,8 @@ C7C4A1----COMPUTE STORAGE TERMS
           IF (IUNIT(1).GT.0) CALL GWF2BCFU1BDS(KKSTP,KKPER)
           IF (IUNIT(29).GT.0) CALL CLN1BDS(KKSTP,KKPER)
 C74A2-----COMPUTE FLOW FROM CONSTANT HEAD AND CBC FLOWS          
-          ALLOCATE(TMPA(NJA))
+          ALLOCATE(FLOWJA(NJA))
           IF (IUNIT(1).GT.0) THEN
-            CALL GWF2BCFU1BDCH(KKSTP,KKPER)
             CALL GWF2BCFU1BDADJ(KKSTP,KKPER)
           ENDIF
           IF (IUNIT(29).GT.0) THEN
@@ -300,7 +299,6 @@ C74A2-----COMPUTE FLOW FROM CONSTANT HEAD AND CBC FLOWS
 C---------------------------------------------------------------------
 C7C4B-----ADJUST THE GNC CORRECTIONS 
           IF(INGNCn.NE.0)THEN
-            CALL SGNCn2BCFU1BDCH  
             CALL SGNCn2BCFU1BDADJ 
           ENDIF          
 C-----------------------------------------------------------------
@@ -313,7 +311,7 @@ C7C5----SAVE CELL-BY-CELL FLOW TERMS
             CALL GWF2CLNU1BDCHWR(KKSTP,KKPER)
             CALL CLN1BDWR(KKSTP,KKPER)
           ENDIF    
-          DEALLOCATE(TMPA)
+          DEALLOCATE(FLOWJA)
 C--------------------------------------------------------------------------------               
 C7C6----CALCULATE AND SAVE BUDGET TERMS FOR BOUNDARIES          
           IF(IUNIT(2).GT.0) CALL GWF2WEL7U1BD(KKSTP,KKPER)

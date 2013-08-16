@@ -1,6 +1,6 @@
                                   MODFLOW-USG      
       U.S. GEOLOGICAL SURVEY MODULAR FINITE-DIFFERENCE GROUNDWATER FLOW MODEL
-                            VERSION 1.0.00 05/03/2013
+                            VERSION 1.1.00 08/23/2013
 
  LIST FILE: ex3A.lst
                          UNIT    7
@@ -57,10 +57,10 @@
  FILE TYPE:DATA(BINARY)   UNIT   54   STATUS:UNKNOWN
  FORMAT:BINARY                 ACCESS:SEQUENTIAL          
 
- BAS -- BASIC PACKAGE-USG      1.0.00 05/03/2013                        INPUT READ FROM UNIT    1
+ BAS -- BASIC PACKAGE-USG      1.1.00 08/23/2013                        INPUT READ FROM UNIT    1
  
  # MODFLOW2005 Basic Package                                                     
- #MODFLOW Data Set Created by Groundwater Vistas                                 
+ #                                                                               
  #
 
  DIS -- UNSTRUCTURED GRID DISCRETIZATION PACKAGE, VERSION 1 : 5/17/2010 - INPUT READ FROM UNIT   12
@@ -9277,6 +9277,6 @@ FROM THE SOLVER INPUT FILE.
          TOTAL TIME 1.38240E+07 2.30400E+05  3840.0      160.00     0.43806    
 1
 
- Run end date and time (yyyy/mm/dd hh:mm:ss): 2013/05/02 12:37:05
- Elapsed run time: 51.218 Seconds
+ Run end date and time (yyyy/mm/dd hh:mm:ss): 2013/08/19  8:55:08
+ Elapsed run time: 50.327 Seconds
 

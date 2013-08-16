@@ -58,6 +58,12 @@ METHOD
 
 HISTORY
 
+      MODFLOW-USG Version 1.1.00 08/23/2013 -- Added bi-conjugate 
+         gradient stabilized acceleration method for the pcgu linear solver.  
+         Added free format option for the STR Package.  See release.txt for
+         a full description of the changes.
+         
+
       MODFLOW-USG Version 1.00.00 05/03/2013 -- First release.
 
 
