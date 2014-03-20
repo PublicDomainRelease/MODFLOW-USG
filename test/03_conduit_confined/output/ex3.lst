@@ -1,6 +1,6 @@
                                   MODFLOW-USG      
       U.S. GEOLOGICAL SURVEY MODULAR FINITE-DIFFERENCE GROUNDWATER FLOW MODEL
-                            VERSION 1.1.00 08/23/2013
+                            VERSION 1.2.00 03/21/2014
 
  LIST FILE: ex3.lst
                          UNIT    7
@@ -49,7 +49,7 @@
  FILE TYPE:DATA(BINARY)   UNIT   36   STATUS:UNKNOWN
  FORMAT:BINARY                 ACCESS:SEQUENTIAL          
 
- BAS -- BASIC PACKAGE-USG      1.1.00 08/23/2013                        INPUT READ FROM UNIT    1
+ BAS -- BASIC PACKAGE-USG      1.2.00 03/21/2014                        INPUT READ FROM UNIT    1
  
  # MODFLOW2005 Basic Package                                                     
  #                                                                               
@@ -66,8 +66,8 @@
    1   0
 
  CLN -- CONNECTED LINE NETWORK DISCRETIZATION PROCESS, VERSION 1, 3/3/2012 INPUT READ FROM UNIT   13
- MAXIMUM NUMBER OF CONDUITS (NCLN) =      1
- FLAG (-VE) OR NUMBER OF CONDUIT DOMAIN NODES (+VE) (ICLNNDS) =     -1
+ FLAG (0) OR MAXIMUM NUMBER OF LINEAR NODES (NCLN) =      1
+ FLAG (-VE) OR NUMBER OF LINEAR NODES (+VE) (ICLNNDS) =     -1
  NUMBER OF LINEAR NODE TO MATRIX GRID CONNECTIONS (NCLNGWC) =      2
 
  CELL-BY-CELL FLOWS WILL BE PRINTED WHEN ICBCFL IS NOT 0 (FLAG ICLNCB IS LESS THAN ZERO)
@@ -81,8 +81,8 @@
                     ----------------------------------------
      CLN-NODE NO. CLNTYP ORIENTATION  CLN LENGTH    BOT ELEVATION         FANGLE         IFLIN           ICCWADI
      -----------  ------ ----------- -----------    -------------    -----------        ------    -------
-              1      1          0    0.100000E+02   -0.110000E+03    0.157000E+01          0          0
-              2      1          0    0.100000E+02   -0.130000E+03    0.157000E+01          0          0
+              1      1          0    0.100000E+02   -0.110000E+03    0.157000E+01         -1          0
+              2      1          0    0.100000E+02   -0.130000E+03    0.157000E+01         -1          0
 
                      CLN TO 3-D GRID CONNECTION INFORMATION
                     ----------------------------------------
@@ -241,11 +241,11 @@ FROM THE SOLVER INPUT FILE.
  Outer-Iteration  Inner-Iteration  Backtracking  Number of        Incoming       Outgoing  Maximum HeadChange      Maximum Head Change
      Number           Count           Flag       Backtracks       Residual       Residual           Value              Location
         1                             0             0          0.800251E+17     0.800251E+17
-        1                9                                                                        -6.91831               2    50    50  lay row col
-        1                9                                                                        -19.9880                     2           CLN-node number
-        2                             0             0          0.344223E-03     0.344223E-03
-        2                1                                                                        0.977923E-06           2    52    45  lay row col
-        2                1                                                                        0.204556E-06                 2           CLN-node number
+        1                8                                                                        -6.91831               2    50    50  lay row col
+        1                8                                                                        -19.9880                     2           CLN-node number
+        2                             0             0          0.144191E-03     0.144191E-03
+        2                1                                                                       -0.592352E-06           2    49    49  lay row col
+        2                1                                                                       -0.560825E-06                 2           CLN-node number
 
 
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   1 STRESS PERIOD   1
@@ -254,20 +254,19 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-   -6.918     (    2,   50,   50)  0.9779E-06 (    2,   52,   45)
+   -6.918     (    2,   50,   50) -0.5924E-06 (    2,   49,   49)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-   -19.988    ,          2  0.20456E-06,          2
+   -19.988    ,          2 -0.56083E-06,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        1
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      1, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-   0.103902E+02
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2    10.3902    
+         2         1   -10.3902    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      1, STRESS PERIOD      1
   -0.103902E+02   0.628504E+05
@@ -281,7 +280,7 @@ FROM THE SOLVER INPUT FILE.
         1                4                                                                        -1.03011                     2           CLN-node number
         2                             0             0          0.418566E-05     0.418566E-05
         2                1                                                                       -0.888598E-07           2    43    55  lay row col
-        2                1                                                                       -0.562781E-07                 2           CLN-node number
+        2                1                                                                       -0.562848E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   2 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -293,15 +292,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-   -1.0301    ,          2 -0.56278E-07,          2
+   -1.0301    ,          2 -0.56285E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        2
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      2, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.883835E+03
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -883.835    
+         2         1    883.835    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      2, STRESS PERIOD      1
    0.883835E+03   0.619562E+05
@@ -315,7 +313,7 @@ FROM THE SOLVER INPUT FILE.
         1                4                                                                       -0.500312                     2           CLN-node number
         2                             0             0          0.919884E-06     0.919884E-06
         2                1                                                                       -0.316689E-07           2    34    62  lay row col
-        2                1                                                                       -0.223610E-07                 2           CLN-node number
+        2                1                                                                       -0.223624E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   3 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -327,15 +325,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.50031    ,          2 -0.22361E-07,          2
+  -0.50031    ,          2 -0.22362E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        3
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      3, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.124946E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -1249.46    
+         2         1    1249.46    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      3, STRESS PERIOD      1
    0.124946E+04   0.615905E+05
@@ -347,9 +344,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.709223E+07     0.709223E+07
         1                4                                                                       -0.386680               2    49    50  lay row col
         1                4                                                                       -0.331270                     2           CLN-node number
-        2                             0             0          0.209437E-06     0.209437E-06
+        2                             0             0          0.209438E-06     0.209438E-06
         2                1                                                                       -0.138301E-07           2    23    68  lay row col
-        2                1                                                                       -0.115654E-07                 2           CLN-node number
+        2                1                                                                       -0.115655E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   4 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -366,10 +363,9 @@ FROM THE SOLVER INPUT FILE.
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        4
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      4, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.147599E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -1475.99    
+         2         1    1475.99    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      4, STRESS PERIOD      1
    0.147599E+04   0.613640E+05
@@ -381,9 +377,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.502691E+07     0.502691E+07
         1                4                                                                       -0.289141               2    49    50  lay row col
         1                4                                                                       -0.247903                     2           CLN-node number
-        2                             0             0          0.338423E-07     0.338423E-07
-        2                1                                                                       -0.570668E-08           2    21    69  lay row col
-        2                1                                                                       -0.436237E-08                 1           CLN-node number
+        2                             0             0          0.338424E-07     0.338424E-07
+        2                1                                                                       -0.570667E-08           2    21    69  lay row col
+        2                1                                                                       -0.436692E-08                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   5 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -395,15 +391,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.24790    ,          2 -0.43624E-08,          1
+  -0.24790    ,          2 -0.43669E-08,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        5
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      5, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.163904E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -1639.04    
+         2         1    1639.04    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      5, STRESS PERIOD      1
    0.163904E+04   0.612010E+05
@@ -415,9 +410,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.388981E+07     0.388981E+07
         1                4                                                                       -0.231116               2    49    49  lay row col
         1                4                                                                       -0.198121                     2           CLN-node number
-        2                             0             0          0.891010E-08     0.891010E-08
-        2                1                                                                       -0.282807E-08           2    15    63  lay row col
-        2                1                                                                       -0.654527E-09                 1           CLN-node number
+        2                             0             0          0.890988E-08     0.890988E-08
+        2                1                                                                       -0.282808E-08           2    15    63  lay row col
+        2                1                                                                       -0.647992E-09                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   6 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -429,15 +424,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.19812    ,          2 -0.65453E-09,          1
+  -0.19812    ,          2 -0.64799E-09,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        6
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      6, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.176568E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -1765.68    
+         2         1    1765.68    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      6, STRESS PERIOD      1
    0.176568E+04   0.610743E+05
@@ -449,9 +443,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.317049E+07     0.317049E+07
         1                4                                                                       -0.192394               2    49    49  lay row col
         1                4                                                                       -0.165010                     2           CLN-node number
-        2                             0             0          0.653252E-08     0.653252E-08
-        2                1                                                                       -0.250224E-08           2    11    62  lay row col
-        2                1                                                                       -0.335376E-10                 1           CLN-node number
+        2                             0             0          0.653234E-08     0.653234E-08
+        2                1                                                                       -0.250228E-08           2    11    62  lay row col
+        2                1                                                                       -0.229168E-10                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   7 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -463,15 +457,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.16501    ,          2 -0.33538E-10,          1
+  -0.16501    ,          2 -0.22917E-10,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        7
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      7, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.186881E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -1868.81    
+         2         1    1868.81    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      7, STRESS PERIOD      1
    0.186881E+04   0.609712E+05
@@ -483,9 +476,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.267469E+07     0.267469E+07
         1                4                                                                       -0.164716               2    49    49  lay row col
         1                4                                                                       -0.141391                     2           CLN-node number
-        2                             0             0          0.721624E-08     0.721624E-08
-        2                1                                                                       -0.274616E-08           2    10    64  lay row col
-        2                1                                                                       -0.107319E-10                 1           CLN-node number
+        2                             0             0          0.721629E-08     0.721629E-08
+        2                1                                                                       -0.274617E-08           2    10    64  lay row col
+        2                1                                                                       -0.142188E-10                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   8 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -497,15 +490,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.14139    ,          2 -0.10732E-10,          1
+  -0.14139    ,          2 -0.14219E-10,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        8
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      8, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.195555E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -1955.55    
+         2         1    1955.55    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      8, STRESS PERIOD      1
    0.195555E+04   0.608845E+05
@@ -517,9 +509,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.231235E+07     0.231235E+07
         1                4                                                                       -0.143958               2    49    49  lay row col
         1                4                                                                       -0.123692                     2           CLN-node number
-        2                             0             0          0.665106E-08     0.665106E-08
-        2                1                                                                       -0.256176E-08           2    10    66  lay row col
-        2                1                                                                       -0.337597E-11                 1           CLN-node number
+        2                             0             0          0.665094E-08     0.665094E-08
+        2                1                                                                       -0.256177E-08           2    10    66  lay row col
+        2                1                                                                        0.279066E-11                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   9 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -531,15 +523,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.12369    ,          2 -0.33760E-11,          1
+  -0.12369    ,          2  0.27907E-11,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        9
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP      9, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.203023E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2030.23    
+         2         1    2030.23    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP      9, STRESS PERIOD      1
    0.203023E+04   0.608098E+05
@@ -551,29 +542,28 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.203607E+07     0.203607E+07
         1                4                                                                       -0.127820               2    49    49  lay row col
         1                4                                                                       -0.109934                     2           CLN-node number
-        2                             0             0          0.360268E-08     0.360268E-08
-        2                1                                                                       -0.220113E-08           1    50    49  lay row col
-        2                1                                                                        0.146700E-09                 2           CLN-node number
+        2                             0             0          0.360278E-08     0.360278E-08
+        2                1                                                                       -0.220207E-08           1    50    49  lay row col
+        2                1                                                                        0.136757E-09                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  10 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.1278     (    2,   49,   49) -0.2201E-08 (    1,   50,   49)
+  -0.1278     (    2,   49,   49) -0.2202E-08 (    1,   50,   49)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.10993    ,          2  0.14670E-09,          2
+  -0.10993    ,          2  0.13676E-09,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       10
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     10, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.209569E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2095.69    
+         2         1    2095.69    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     10, STRESS PERIOD      1
    0.209569E+04   0.607443E+05
@@ -585,29 +575,28 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.181848E+07     0.181848E+07
         1                4                                                                       -0.114917               2    49    49  lay row col
         1                4                                                                       -0.989320E-01                 2           CLN-node number
-        2                             0             0          0.163299E-08     0.163299E-08
-        2                1                                                                        0.136191E-08           2    51    51  lay row col
-        2                1                                                                        0.231478E-09                 2           CLN-node number
+        2                             0             0          0.163303E-08     0.163303E-08
+        2                1                                                                        0.136147E-08           2    51    51  lay row col
+        2                1                                                                        0.227780E-09                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  11 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.1149     (    2,   49,   49)  0.1362E-08 (    2,   51,   51)
+  -0.1149     (    2,   49,   49)  0.1361E-08 (    2,   51,   51)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.98932E-01,          2  0.23148E-09,          2
+  -0.98932E-01,          2  0.22778E-09,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       11
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     11, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.215388E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2153.88    
+         2         1    2153.88    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     11, STRESS PERIOD      1
    0.215388E+04   0.606861E+05
@@ -619,9 +608,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.164272E+07     0.164272E+07
         1                4                                                                       -0.104367               2    49    49  lay row col
         1                4                                                                       -0.899332E-01                 2           CLN-node number
-        2                             0             0          0.837613E-09     0.837613E-09
-        2                1                                                                        0.112036E-08           2    51    52  lay row col
-        2                1                                                                        0.231398E-09                 2           CLN-node number
+        2                             0             0          0.837610E-09     0.837610E-09
+        2                1                                                                        0.112043E-08           2    51    52  lay row col
+        2                1                                                                        0.232443E-09                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  12 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -633,15 +622,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.89933E-01,          2  0.23140E-09,          2
+  -0.89933E-01,          2  0.23244E-09,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       12
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     12, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.220621E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2206.21    
+         2         1    2206.21    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     12, STRESS PERIOD      1
    0.220621E+04   0.606338E+05
@@ -653,9 +641,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.149782E+07     0.149782E+07
         1                4                                                                       -0.956166E-01           2    49    48  lay row col
         1                4                                                                       -0.824358E-01                 2           CLN-node number
-        2                             0             0          0.498955E-09     0.498955E-09
-        2                1                                                                        0.103384E-08           2    51    52  lay row col
-        2                1                                                                        0.246708E-09                 2           CLN-node number
+        2                             0             0          0.498914E-09     0.498914E-09
+        2                1                                                                        0.103437E-08           2    51    52  lay row col
+        2                1                                                                        0.253756E-09                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  13 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -667,15 +655,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.82436E-01,          2  0.24671E-09,          2
+  -0.82436E-01,          2  0.25376E-09,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       13
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     13, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.225370E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2253.70    
+         2         1    2253.70    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     13, STRESS PERIOD      1
    0.225370E+04   0.605863E+05
@@ -687,29 +674,28 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.137635E+07     0.137635E+07
         1                4                                                                       -0.882390E-01           2    49    48  lay row col
         1                4                                                                       -0.760930E-01                 2           CLN-node number
-        2                             0             0          0.343402E-09     0.343402E-09
-        2                1                                                                        0.981331E-09           2    51    52  lay row col
-        2                1                                                                        0.276668E-09                 2           CLN-node number
+        2                             0             0          0.343481E-09     0.343481E-09
+        2                1                                                                        0.980808E-09           2    51    52  lay row col
+        2                1                                                                        0.269539E-09                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  14 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.8824E-01 (    2,   49,   48)  0.9813E-09 (    2,   51,   52)
+  -0.8824E-01 (    2,   49,   48)  0.9808E-09 (    2,   51,   52)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.76093E-01,          2  0.27667E-09,          2
+  -0.76093E-01,          2  0.26954E-09,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       14
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     14, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.229714E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2297.14    
+         2         1    2297.14    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     14, STRESS PERIOD      1
    0.229714E+04   0.605429E+05
@@ -721,29 +707,28 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.127308E+07     0.127308E+07
         1                4                                                                       -0.819119E-01           2    49    48  lay row col
         1                4                                                                       -0.706571E-01                 2           CLN-node number
-        2                             0             0          0.261758E-09     0.261758E-09
-        2                1                                                                        0.908322E-09           2    51    52  lay row col
-        2                1                                                                        0.266571E-09                 2           CLN-node number
+        2                             0             0          0.261725E-09     0.261725E-09
+        2                1                                                                        0.908667E-09           2    51    52  lay row col
+        2                1                                                                        0.271144E-09                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  15 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.8191E-01 (    2,   49,   48)  0.9083E-09 (    2,   51,   52)
+  -0.8191E-01 (    2,   49,   48)  0.9087E-09 (    2,   51,   52)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.70657E-01,          2  0.26657E-09,          2
+  -0.70657E-01,          2  0.27114E-09,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       15
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     15, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.233714E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2337.14    
+         2         1    2337.14    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     15, STRESS PERIOD      1
    0.233714E+04   0.605029E+05
@@ -755,29 +740,28 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0          0.118425E+07     0.118425E+07
         1                4                                                                       -0.764262E-01           2    49    48  lay row col
         1                4                                                                       -0.659465E-01                 2           CLN-node number
-        2                             0             0          0.208940E-09     0.208940E-09
-        2                1                                                                        0.807997E-09           2    51    52  lay row col
-        2                1                                                                        0.248551E-09                 2           CLN-node number
+        2                             0             0          0.208955E-09     0.208955E-09
+        2                1                                                                        0.807848E-09           2    51    52  lay row col
+        2                1                                                                        0.246628E-09                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  16 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.7643E-01 (    2,   49,   48)  0.8080E-09 (    2,   51,   52)
+  -0.7643E-01 (    2,   49,   48)  0.8078E-09 (    2,   51,   52)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.65946E-01,          2  0.24855E-09,          2
+  -0.65946E-01,          2  0.24663E-09,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       16
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     16, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.237418E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2374.18    
+         2         1    2374.18    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     16, STRESS PERIOD      1
    0.237418E+04   0.604658E+05
@@ -790,8 +774,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.716251E-01           2    49    48  lay row col
         1                3                                                                       -0.618251E-01                 2           CLN-node number
         2                             0             0          0.192200E-06     0.192200E-06
-        2                1                                                                        0.566866E-07           1    50    50  lay row col
-        2                1                                                                        0.320203E-07                 1           CLN-node number
+        2                1                                                                        0.566862E-07           1    50    50  lay row col
+        2                1                                                                        0.320189E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  17 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -803,15 +787,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.61825E-01,          2  0.32020E-07,          1
+  -0.61825E-01,          2  0.32019E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       17
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     17, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.240867E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2408.67    
+         2         1    2408.67    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     17, STRESS PERIOD      1
    0.240867E+04   0.604313E+05
@@ -824,8 +807,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.673882E-01           2    49    48  lay row col
         1                3                                                                       -0.581888E-01                 2           CLN-node number
         2                             0             0          0.167001E-06     0.167001E-06
-        2                1                                                                        0.579180E-07           1    50    50  lay row col
-        2                1                                                                        0.293120E-07                 1           CLN-node number
+        2                1                                                                        0.579182E-07           1    50    50  lay row col
+        2                1                                                                        0.293126E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  18 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -837,15 +820,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.58189E-01,          2  0.29312E-07,          1
+  -0.58189E-01,          2  0.29313E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       18
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     18, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.244090E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2440.90    
+         2         1    2440.90    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     18, STRESS PERIOD      1
    0.244090E+04   0.603991E+05
@@ -858,8 +840,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.636220E-01           2    49    48  lay row col
         1                3                                                                       -0.549569E-01                 2           CLN-node number
         2                             0             0          0.149322E-06     0.149322E-06
-        2                1                                                                        0.567435E-07           1    50    50  lay row col
-        2                1                                                                        0.265747E-07                 1           CLN-node number
+        2                1                                                                        0.567421E-07           1    50    50  lay row col
+        2                1                                                                        0.265696E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  19 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -871,15 +853,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.54957E-01,          2  0.26575E-07,          1
+  -0.54957E-01,          2  0.26570E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       19
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     19, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.247116E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2471.16    
+         2         1    2471.16    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     19, STRESS PERIOD      1
    0.247116E+04   0.603688E+05
@@ -892,28 +873,27 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.602522E-01           2    49    48  lay row col
         1                3                                                                       -0.520653E-01                 2           CLN-node number
         2                             0             0          0.138695E-06     0.138695E-06
-        2                1                                                                        0.540448E-07           1    50    50  lay row col
-        2                1                                                                        0.239025E-07                 1           CLN-node number
+        2                1                                                                        0.540465E-07           1    50    50  lay row col
+        2                1                                                                        0.239084E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  20 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.6025E-01 (    2,   49,   48)  0.5404E-07 (    1,   50,   50)
+  -0.6025E-01 (    2,   49,   48)  0.5405E-07 (    1,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.52065E-01,          2  0.23902E-07,          1
+  -0.52065E-01,          2  0.23908E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       20
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     20, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.249965E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2499.65    
+         2         1    2499.65    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     20, STRESS PERIOD      1
    0.249965E+04   0.603403E+05
@@ -926,8 +906,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.572198E-01           2    48    49  lay row col
         1                3                                                                       -0.494631E-01                 2           CLN-node number
         2                             0             0          0.134561E-06     0.134561E-06
-        2                1                                                                        0.505160E-07           1    50    50  lay row col
-        2                1                                                                        0.213915E-07                 1           CLN-node number
+        2                1                                                                        0.505155E-07           1    50    50  lay row col
+        2                1                                                                        0.213896E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  21 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -939,15 +919,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.49463E-01,          2  0.21391E-07,          1
+  -0.49463E-01,          2  0.21390E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       21
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     21, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.252657E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2526.57    
+         2         1    2526.57    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     21, STRESS PERIOD      1
    0.252657E+04   0.603134E+05
@@ -960,8 +939,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.544765E-01           2    48    49  lay row col
         1                3                                                                       -0.471090E-01                 2           CLN-node number
         2                             0             0          0.136145E-06     0.136145E-06
-        2                1                                                                        0.465868E-07           1    50    50  lay row col
-        2                1                                                                        0.190810E-07                 1           CLN-node number
+        2                1                                                                        0.465870E-07           1    50    50  lay row col
+        2                1                                                                        0.190817E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  22 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -973,15 +952,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.47109E-01,          2  0.19081E-07,          1
+  -0.47109E-01,          2  0.19082E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       22
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     22, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.255207E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2552.07    
+         2         1    2552.07    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     22, STRESS PERIOD      1
    0.255207E+04   0.602879E+05
@@ -994,8 +972,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.519914E-01           2    48    48  lay row col
         1                3                                                                       -0.449691E-01                 2           CLN-node number
         2                             0             0          0.142584E-06     0.142584E-06
-        2                1                                                                        0.425201E-07           1    50    50  lay row col
-        2                1                                                                        0.170297E-07                 1           CLN-node number
+        2                1                                                                        0.425203E-07           1    50    50  lay row col
+        2                1                                                                        0.170306E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  23 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1007,15 +985,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.44969E-01,          2  0.17030E-07,          1
+  -0.44969E-01,          2  0.17031E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       23
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     23, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.257629E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2576.29    
+         2         1    2576.29    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     23, STRESS PERIOD      1
    0.257629E+04   0.602637E+05
@@ -1028,8 +1005,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.497238E-01           2    48    48  lay row col
         1                3                                                                       -0.430156E-01                 2           CLN-node number
         2                             0             0          0.153142E-06     0.153142E-06
-        2                1                                                                        0.384837E-07           1    50    50  lay row col
-        2                1                                                                        0.152971E-07                 1           CLN-node number
+        2                1                                                                        0.384833E-07           1    50    50  lay row col
+        2                1                                                                        0.152955E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  24 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1041,15 +1018,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.43016E-01,          2  0.15297E-07,          1
+  -0.43016E-01,          2  0.15296E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       24
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     24, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.259935E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2599.35    
+         2         1    2599.35    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     24, STRESS PERIOD      1
    0.259935E+04   0.602406E+05
@@ -1062,8 +1038,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.476452E-01           2    48    48  lay row col
         1                3                                                                       -0.412252E-01                 2           CLN-node number
         2                             0             0          0.167505E-06     0.167505E-06
-        2                1                                                                        0.345983E-07           1    50    50  lay row col
-        2                1                                                                        0.139544E-07                 1           CLN-node number
+        2                1                                                                        0.345989E-07           1    50    50  lay row col
+        2                1                                                                        0.139566E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  25 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1075,15 +1051,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.41225E-01,          2  0.13954E-07,          1
+  -0.41225E-01,          2  0.13957E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       25
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     25, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.262135E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2621.35    
+         2         1    2621.35    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     25, STRESS PERIOD      1
    0.262135E+04   0.602186E+05
@@ -1096,8 +1071,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.457329E-01           2    48    48  lay row col
         1                3                                                                       -0.395784E-01                 2           CLN-node number
         2                             0             0          0.186183E-06     0.186183E-06
-        2                1                                                                        0.309639E-07           1    50    50  lay row col
-        2                1                                                                        0.130960E-07                 1           CLN-node number
+        2                1                                                                        0.309641E-07           1    50    50  lay row col
+        2                1                                                                        0.130966E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  26 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1109,15 +1084,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.39578E-01,          2  0.13096E-07,          1
+  -0.39578E-01,          2  0.13097E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       26
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     26, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.264238E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2642.38    
+         2         1    2642.38    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     26, STRESS PERIOD      1
    0.264238E+04   0.601976E+05
@@ -1130,8 +1104,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.439681E-01           2    48    48  lay row col
         1                3                                                                       -0.380587E-01                 2           CLN-node number
         2                             0             0          0.211017E-06     0.211017E-06
-        2                1                                                                        0.276662E-07           1    50    50  lay row col
-        2                1                                                                        0.128171E-07                 1           CLN-node number
+        2                1                                                                        0.276681E-07           1    50    50  lay row col
+        2                1                                                                        0.128240E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  27 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1143,15 +1117,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.38059E-01,          2  0.12817E-07,          1
+  -0.38059E-01,          2  0.12824E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       27
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     27, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.266251E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2662.51    
+         2         1    2662.51    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     27, STRESS PERIOD      1
    0.266251E+04   0.601775E+05
@@ -1164,8 +1137,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.423345E-01           2    48    48  lay row col
         1                3                                                                       -0.366521E-01                 2           CLN-node number
         2                             0             0          0.245721E-06     0.245721E-06
-        2                1                                                                        0.247838E-07           1    50    50  lay row col
-        2                1                                                                        0.132287E-07                 1           CLN-node number
+        2                1                                                                        0.247834E-07           1    50    50  lay row col
+        2                1                                                                        0.132274E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  28 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1177,15 +1150,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.36652E-01,          2  0.13229E-07,          1
+  -0.36652E-01,          2  0.13227E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       28
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     28, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.268182E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2681.82    
+         2         1    2681.82    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     28, STRESS PERIOD      1
    0.268182E+04   0.601582E+05
@@ -1198,8 +1170,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.408182E-01           2    48    48  lay row col
         1                3                                                                       -0.353465E-01                 2           CLN-node number
         2                             0             0          0.296297E-06     0.296297E-06
-        2                1                                                                        0.223756E-07           1    50    50  lay row col
-        2                1                                                                        0.144352E-07                 1           CLN-node number
+        2                1                                                                        0.223758E-07           1    50    50  lay row col
+        2                1                                                                        0.144360E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  29 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1211,15 +1183,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.35347E-01,          2  0.14435E-07,          1
+  -0.35347E-01,          2  0.14436E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       29
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     29, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.270038E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2700.38    
+         2         1    2700.38    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     29, STRESS PERIOD      1
    0.270038E+04   0.601396E+05
@@ -1232,8 +1203,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.394073E-01           2    48    48  lay row col
         1                3                                                                       -0.341316E-01                 2           CLN-node number
         2                             0             0          0.371070E-06     0.371070E-06
-        2                1                                                                       -0.205555E-07           2    71     4  lay row col
-        2                1                                                                        0.165221E-07                 1           CLN-node number
+        2                1                                                                       -0.205554E-07           2    71     4  lay row col
+        2                1                                                                        0.165213E-07                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  30 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1245,15 +1216,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.34132E-01,          2  0.16522E-07,          1
+  -0.34132E-01,          2  0.16521E-07,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       30
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     30, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.271823E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2718.23    
+         2         1    2718.23    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     30, STRESS PERIOD      1
    0.271823E+04   0.601218E+05
@@ -1265,9 +1235,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           594179.          594179.    
         1                3                                                                       -0.380913E-01           2    48    48  lay row col
         1                3                                                                       -0.329984E-01                 2           CLN-node number
-        2                             0             0          0.480071E-06     0.480071E-06
+        2                             0             0          0.480070E-06     0.480070E-06
         2                1                                                                       -0.250430E-07           2    71     5  lay row col
-        2                1                                                                        0.195256E-07                 2           CLN-node number
+        2                1                                                                        0.195317E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  31 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1279,15 +1249,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.32998E-01,          2  0.19526E-07,          2
+  -0.32998E-01,          2  0.19532E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       31
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     31, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.273542E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2735.42    
+         2         1    2735.42    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     31, STRESS PERIOD      1
    0.273542E+04   0.601046E+05
@@ -1299,9 +1268,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           577300.          577300.    
         1                3                                                                       -0.368613E-01           2    48    48  lay row col
         1                3                                                                       -0.319390E-01                 2           CLN-node number
-        2                             0             0          0.633522E-06     0.633522E-06
+        2                             0             0          0.633523E-06     0.633523E-06
         2                1                                                                       -0.303078E-07           2    71     5  lay row col
-        2                1                                                                        0.234181E-07                 2           CLN-node number
+        2                1                                                                        0.234179E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  32 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1318,10 +1287,9 @@ FROM THE SOLVER INPUT FILE.
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       32
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     32, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.275201E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2752.01    
+         2         1    2752.01    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     32, STRESS PERIOD      1
    0.275201E+04   0.600880E+05
@@ -1335,7 +1303,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.309468E-01                 2           CLN-node number
         2                             0             0          0.839474E-06     0.839474E-06
         2                1                                                                       -0.361967E-07           2    72     5  lay row col
-        2                1                                                                        0.280755E-07                 2           CLN-node number
+        2                1                                                                        0.280783E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  33 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1347,15 +1315,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.30947E-01,          2  0.28075E-07,          2
+  -0.30947E-01,          2  0.28078E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       33
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     33, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.276803E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2768.03    
+         2         1    2768.03    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     33, STRESS PERIOD      1
    0.276803E+04   0.600720E+05
@@ -1369,7 +1336,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.300156E-01                 2           CLN-node number
         2                             0             0          0.110097E-05     0.110097E-05
         2                1                                                                       -0.425462E-07           2    72     5  lay row col
-        2                1                                                                        0.332998E-07                 2           CLN-node number
+        2                1                                                                        0.333029E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  34 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1381,15 +1348,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.30016E-01,          2  0.33300E-07,          2
+  -0.30016E-01,          2  0.33303E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       34
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     34, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.278352E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2783.52    
+         2         1    2783.52    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     34, STRESS PERIOD      1
    0.278352E+04   0.600565E+05
@@ -1403,7 +1369,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.291402E-01                 2           CLN-node number
         2                             0             0          0.141360E-05     0.141360E-05
         2                1                                                                       -0.491377E-07           2    72     6  lay row col
-        2                1                                                                        0.388262E-07                 2           CLN-node number
+        2                1                                                                        0.388278E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  35 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1415,15 +1381,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.29140E-01,          2  0.38826E-07,          2
+  -0.29140E-01,          2  0.38828E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       35
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     35, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.279851E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2798.51    
+         2         1    2798.51    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     35, STRESS PERIOD      1
    0.279851E+04   0.600415E+05
@@ -1437,7 +1402,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.283160E-01                 2           CLN-node number
         2                             0             0          0.176432E-05     0.176432E-05
         2                1                                                                       -0.557649E-07           2    72     6  lay row col
-        2                1                                                                        0.443349E-07                 2           CLN-node number
+        2                1                                                                        0.443372E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  36 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1449,15 +1414,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.28316E-01,          2  0.44335E-07,          2
+  -0.28316E-01,          2  0.44337E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       36
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     36, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.281303E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2813.03    
+         2         1    2813.03    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     36, STRESS PERIOD      1
    0.281303E+04   0.600270E+05
@@ -1471,7 +1435,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.275386E-01                 2           CLN-node number
         2                             0             0          0.213254E-05     0.213254E-05
         2                1                                                                       -0.620819E-07           2    73     6  lay row col
-        2                1                                                                        0.494899E-07                 2           CLN-node number
+        2                1                                                                        0.494958E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  37 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1483,15 +1447,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.27539E-01,          2  0.49490E-07,          2
+  -0.27539E-01,          2  0.49496E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       37
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     37, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.282712E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2827.12    
+         2         1    2827.12    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     37, STRESS PERIOD      1
    0.282712E+04   0.600129E+05
@@ -1505,7 +1468,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.268046E-01                 2           CLN-node number
         2                             0             0          0.249328E-05     0.249328E-05
         2                1                                                                       -0.678107E-07           2    73     6  lay row col
-        2                1                                                                        0.539926E-07                 2           CLN-node number
+        2                1                                                                        0.539946E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  38 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1517,15 +1480,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.26805E-01,          2  0.53993E-07,          2
+  -0.26805E-01,          2  0.53995E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       38
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     38, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.284079E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2840.79    
+         2         1    2840.79    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     38, STRESS PERIOD      1
    0.284079E+04   0.599992E+05
@@ -1539,7 +1501,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.261105E-01                 2           CLN-node number
         2                             0             0          0.282185E-05     0.282185E-05
         2                1                                                                       -0.727115E-07           2    73     6  lay row col
-        2                1                                                                        0.575991E-07                 2           CLN-node number
+        2                1                                                                        0.576009E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  39 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1551,15 +1513,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.26110E-01,          2  0.57599E-07,          2
+  -0.26110E-01,          2  0.57601E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       39
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     39, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.285408E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2854.08    
+         2         1    2854.08    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     39, STRESS PERIOD      1
    0.285408E+04   0.599859E+05
@@ -1572,8 +1533,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.293461E-01           2    48    47  lay row col
         1                3                                                                       -0.254534E-01                 2           CLN-node number
         2                             0             0          0.309849E-05     0.309849E-05
-        2                1                                                                       -0.766419E-07           2    73     6  lay row col
-        2                1                                                                        0.601642E-07                 2           CLN-node number
+        2                1                                                                       -0.766418E-07           2    73     6  lay row col
+        2                1                                                                        0.601600E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  40 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1585,15 +1546,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.25453E-01,          2  0.60164E-07,          2
+  -0.25453E-01,          2  0.60160E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       40
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     40, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.286699E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2866.99    
+         2         1    2866.99    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     40, STRESS PERIOD      1
    0.286699E+04   0.599730E+05
@@ -1605,9 +1565,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           473195.          473195.    
         1                3                                                                       -0.286270E-01           2    48    47  lay row col
         1                3                                                                       -0.248305E-01                 2           CLN-node number
-        2                             0             0          0.331147E-05     0.331147E-05
+        2                             0             0          0.331146E-05     0.331146E-05
         2                1                                                                       -0.795741E-07           2    74     6  lay row col
-        2                1                                                                        0.616501E-07                 2           CLN-node number
+        2                1                                                                        0.616526E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  41 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1619,15 +1579,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.24831E-01,          2  0.61650E-07,          2
+  -0.24831E-01,          2  0.61653E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       41
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     41, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.287957E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2879.57    
+         2         1    2879.57    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     41, STRESS PERIOD      1
    0.287957E+04   0.599604E+05
@@ -1640,8 +1599,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.279448E-01           2    48    47  lay row col
         1                3                                                                       -0.242396E-01                 2           CLN-node number
         2                             0             0          0.345797E-05     0.345797E-05
-        2                1                                                                       -0.815586E-07           2    74     7  lay row col
-        2                1                                                                        0.621154E-07                 2           CLN-node number
+        2                1                                                                       -0.815585E-07           2    74     7  lay row col
+        2                1                                                                        0.621143E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  42 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1653,15 +1612,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.24240E-01,          2  0.62115E-07,          2
+  -0.24240E-01,          2  0.62114E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       42
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     42, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.289181E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2891.81    
+         2         1    2891.81    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     42, STRESS PERIOD      1
    0.289181E+04   0.599482E+05
@@ -1675,7 +1633,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.236783E-01                 2           CLN-node number
         2                             0             0          0.354278E-05     0.354278E-05
         2                1                                                                       -0.826900E-07           2    74     7  lay row col
-        2                1                                                                        0.616745E-07                 2           CLN-node number
+        2                1                                                                        0.616739E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  43 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1687,15 +1645,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23678E-01,          2  0.61675E-07,          2
+  -0.23678E-01,          2  0.61674E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       43
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     43, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.290375E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2903.75    
+         2         1    2903.75    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     43, STRESS PERIOD      1
    0.290375E+04   0.599362E+05
@@ -1709,7 +1666,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.231448E-01                 2           CLN-node number
         2                             0             0          0.357567E-05     0.357567E-05
         2                1                                                                       -0.830789E-07           2    74     7  lay row col
-        2                1                                                                        0.604755E-07                 2           CLN-node number
+        2                1                                                                        0.604776E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  44 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1721,15 +1678,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23145E-01,          2  0.60475E-07,          2
+  -0.23145E-01,          2  0.60478E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       44
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     44, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.291539E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2915.39    
+         2         1    2915.39    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     44, STRESS PERIOD      1
    0.291539E+04   0.599246E+05
@@ -1743,7 +1699,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.226371E-01                 2           CLN-node number
         2                             0             0          0.356865E-05     0.356865E-05
         2                1                                                                       -0.828628E-07           2    74     7  lay row col
-        2                1                                                                        0.586707E-07                 2           CLN-node number
+        2                1                                                                        0.586678E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  45 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1755,15 +1711,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.22637E-01,          2  0.58671E-07,          2
+  -0.22637E-01,          2  0.58668E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       45
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     45, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.292676E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2926.76    
+         2         1    2926.76    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     45, STRESS PERIOD      1
    0.292676E+04   0.599132E+05
@@ -1777,7 +1732,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.221537E-01                 2           CLN-node number
         2                             0             0          0.353375E-05     0.353375E-05
         2                1                                                                       -0.821653E-07           2    74     7  lay row col
-        2                1                                                                        0.563940E-07                 2           CLN-node number
+        2                1                                                                        0.563944E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  46 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1794,10 +1749,9 @@ FROM THE SOLVER INPUT FILE.
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       46
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     46, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.293786E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2937.86    
+         2         1    2937.86    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     46, STRESS PERIOD      1
    0.293786E+04   0.599021E+05
@@ -1811,7 +1765,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.216931E-01                 2           CLN-node number
         2                             0             0          0.348155E-05     0.348155E-05
         2                1                                                                       -0.810888E-07           2    74     7  lay row col
-        2                1                                                                        0.537580E-07                 2           CLN-node number
+        2                1                                                                        0.537591E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  47 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1823,15 +1777,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.21693E-01,          2  0.53758E-07,          2
+  -0.21693E-01,          2  0.53759E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       47
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     47, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.294871E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2948.71    
+         2         1    2948.71    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     47, STRESS PERIOD      1
    0.294871E+04   0.598913E+05
@@ -1845,7 +1798,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.212538E-01                 2           CLN-node number
         2                             0             0          0.342063E-05     0.342063E-05
         2                1                                                                       -0.797141E-07           2    74     7  lay row col
-        2                1                                                                        0.508584E-07                 2           CLN-node number
+        2                1                                                                        0.508573E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  48 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1857,15 +1810,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.21254E-01,          2  0.50858E-07,          2
+  -0.21254E-01,          2  0.50857E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       48
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     48, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.295932E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2959.32    
+         2         1    2959.32    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     48, STRESS PERIOD      1
    0.295932E+04   0.598807E+05
@@ -1879,7 +1831,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.208345E-01                 2           CLN-node number
         2                             0             0          0.335742E-05     0.335742E-05
         2                1                                                                       -0.781046E-07           2    74     7  lay row col
-        2                1                                                                        0.477632E-07                 2           CLN-node number
+        2                1                                                                        0.477631E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  49 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1896,10 +1848,9 @@ FROM THE SOLVER INPUT FILE.
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       49
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     49, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.296971E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2969.71    
+         2         1    2969.71    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     49, STRESS PERIOD      1
    0.296971E+04   0.598703E+05
@@ -1913,7 +1864,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.204342E-01                 2           CLN-node number
         2                             0             0          0.329645E-05     0.329645E-05
         2                1                                                                       -0.763260E-07           2    73     7  lay row col
-        2                1                                                                        0.445373E-07                 2           CLN-node number
+        2                1                                                                        0.445397E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  50 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1925,15 +1876,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.20434E-01,          2  0.44537E-07,          2
+  -0.20434E-01,          2  0.44540E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       50
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     50, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.297988E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2979.88    
+         2         1    2979.88    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     50, STRESS PERIOD      1
    0.297988E+04   0.598601E+05
@@ -1947,7 +1897,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.200518E-01                 2           CLN-node number
         2                             0             0          0.324066E-05     0.324066E-05
         2                1                                                                       -0.744315E-07           2    73     7  lay row col
-        2                1                                                                        0.412351E-07                 2           CLN-node number
+        2                1                                                                        0.412335E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  51 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1959,15 +1909,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.20052E-01,          2  0.41235E-07,          2
+  -0.20052E-01,          2  0.41234E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       51
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     51, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.298984E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2989.84    
+         2         1    2989.84    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     51, STRESS PERIOD      1
    0.298984E+04   0.598502E+05
@@ -1981,7 +1930,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.196862E-01                 2           CLN-node number
         2                             0             0          0.319175E-05     0.319175E-05
         2                1                                                                       -0.724401E-07           2    73     7  lay row col
-        2                1                                                                        0.378972E-07                 2           CLN-node number
+        2                1                                                                        0.378968E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  52 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1998,10 +1947,9 @@ FROM THE SOLVER INPUT FILE.
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       52
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     52, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.299961E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -2999.61    
+         2         1    2999.61    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     52, STRESS PERIOD      1
    0.299961E+04   0.598404E+05
@@ -2014,8 +1962,8 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.222975E-01           2    47    47  lay row col
         1                3                                                                       -0.193365E-01                 2           CLN-node number
         2                             0             0          0.315051E-05     0.315051E-05
-        2                1                                                                       -0.703848E-07           2    73     7  lay row col
-        2                1                                                                        0.345640E-07                 2           CLN-node number
+        2                1                                                                       -0.703849E-07           2    73     7  lay row col
+        2                1                                                                        0.345646E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  53 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2027,15 +1975,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.19336E-01,          2  0.34564E-07,          2
+  -0.19336E-01,          2  0.34565E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       53
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     53, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.300920E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3009.20    
+         2         1    3009.20    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     53, STRESS PERIOD      1
    0.300920E+04   0.598308E+05
@@ -2049,7 +1996,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.190018E-01                 2           CLN-node number
         2                             0             0          0.311710E-05     0.311710E-05
         2                1                                                                       -0.682954E-07           2    73     7  lay row col
-        2                1                                                                        0.312689E-07                 2           CLN-node number
+        2                1                                                                        0.312715E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  54 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2061,15 +2008,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.19002E-01,          2  0.31269E-07,          2
+  -0.19002E-01,          2  0.31272E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       54
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     54, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.301861E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3018.61    
+         2         1    3018.61    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     54, STRESS PERIOD      1
    0.301861E+04   0.598214E+05
@@ -2083,7 +2029,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.186814E-01                 2           CLN-node number
         2                             0             0          0.309121E-05     0.309121E-05
         2                1                                                                        0.703542E-07           2    89    93  lay row col
-        2                1                                                                        0.280442E-07                 2           CLN-node number
+        2                1                                                                        0.280395E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  55 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2095,15 +2041,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.18681E-01,          2  0.28044E-07,          2
+  -0.18681E-01,          2  0.28040E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       55
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     55, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.302785E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3027.85    
+         2         1    3027.85    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     55, STRESS PERIOD      1
    0.302785E+04   0.598122E+05
@@ -2117,7 +2062,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.183745E-01                 2           CLN-node number
         2                             0             0          0.307228E-05     0.307228E-05
         2                1                                                                        0.726232E-07           2    89    93  lay row col
-        2                1                                                                        0.249002E-07                 2           CLN-node number
+        2                1                                                                        0.248997E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  56 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2134,10 +2079,9 @@ FROM THE SOLVER INPUT FILE.
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       56
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     56, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.303692E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3036.92    
+         2         1    3036.92    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     56, STRESS PERIOD      1
    0.303692E+04   0.598031E+05
@@ -2151,7 +2095,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.180804E-01                 2           CLN-node number
         2                             0             0          0.305962E-05     0.305962E-05
         2                1                                                                        0.746372E-07           2    89    93  lay row col
-        2                1                                                                        0.218679E-07                 2           CLN-node number
+        2                1                                                                        0.218651E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  57 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2163,15 +2107,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.18080E-01,          2  0.21868E-07,          2
+  -0.18080E-01,          2  0.21865E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       57
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     57, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.304585E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3045.85    
+         2         1    3045.85    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     57, STRESS PERIOD      1
    0.304585E+04   0.597942E+05
@@ -2185,7 +2128,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.177985E-01                 2           CLN-node number
         2                             0             0          0.305246E-05     0.305246E-05
         2                1                                                                        0.764110E-07           2    89    93  lay row col
-        2                1                                                                        0.189457E-07                 2           CLN-node number
+        2                1                                                                        0.189422E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  58 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2197,15 +2140,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.17798E-01,          2  0.18946E-07,          2
+  -0.17798E-01,          2  0.18942E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       58
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     58, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.305463E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3054.63    
+         2         1    3054.63    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     58, STRESS PERIOD      1
    0.305463E+04   0.597854E+05
@@ -2219,7 +2161,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.175281E-01                 2           CLN-node number
         2                             0             0          0.305002E-05     0.305002E-05
         2                1                                                                        0.780075E-07           2    89    92  lay row col
-        2                1                                                                        0.161507E-07                 2           CLN-node number
+        2                1                                                                        0.161484E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  59 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2231,15 +2173,14 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.17528E-01,          2  0.16151E-07,          2
+  -0.17528E-01,          2  0.16148E-07,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       59
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     59, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.306326E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3063.26    
+         2         1    3063.26    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     59, STRESS PERIOD      1
    0.306326E+04   0.597767E+05
@@ -2253,7 +2194,7 @@ FROM THE SOLVER INPUT FILE.
         1                3                                                                       -0.172687E-01                 2           CLN-node number
         2                             0             0          0.305158E-05     0.305158E-05
         2                1                                                                        0.794153E-07           2    89    92  lay row col
-        2                1                                                                        0.134840E-07                 2           CLN-node number
+        2                1                                                                        0.134846E-07                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  60 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2265,7 +2206,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.17269E-01,          2  0.13484E-07,          2
+  -0.17269E-01,          2  0.13485E-07,          2
 
  OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       60
     PRINT HEAD FOR ALL LAYERS
@@ -2281,10 +2222,9 @@ FROM THE SOLVER INPUT FILE.
  UBDSV1 SAVING "FLOW LOWER FACE " ON UNIT  50 AT TIME STEP     60, STRESS PERIOD      1
 
  WRITING "   FLOW CLN FACE" BELOW AT TIME STEP     60, STRESS PERIOD      1
-
- FLOW THROUGH CONDUIT NUMBER:         1 =
- ----------------------------------------
-  -0.307177E+04
+ CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS
+         1         2   -3071.77    
+         2         1    3071.77    
 
  WRITING "      GWF TO CLN" BELOW AT TIME STEP     60, STRESS PERIOD      1
    0.307177E+04   0.597682E+05
@@ -4722,7 +4662,7 @@ FROM THE SOLVER INPUT FILE.
        4.3577E-02  4.9830E-02  5.6784E-02  6.4478E-02  7.2942E-02  8.2192E-02  9.2228E-02  0.1030      0.1145      0.1267    
        0.1393      0.1521      0.1650      0.1776      0.1895      0.2001      0.2091      0.2160      0.2203      0.2217    
        0.2203      0.2160      0.2091      0.2001      0.1895      0.1776      0.1650      0.1521      0.1393      0.1267    
-       0.1145      0.1030      9.2228E-02  8.2192E-02  7.2942E-02  6.4478E-02  5.6784E-02  4.9830E-02  4.3577E-02  3.7982E-02
+       0.1145      0.1030      9.2228E-02  8.2192E-02  7.2941E-02  6.4478E-02  5.6784E-02  4.9830E-02  4.3577E-02  3.7982E-02
        3.2999E-02  2.8578E-02  2.4673E-02  2.1237E-02  1.8224E-02  1.5593E-02  1.3302E-02  1.1314E-02  9.5963E-03  8.1158E-03
        6.8442E-03  5.7556E-03  4.8267E-03  4.0367E-03  3.3669E-03  2.8010E-03  2.3244E-03  1.9245E-03  1.5902E-03  1.3118E-03
        1.0812E-03  8.9114E-04  7.3567E-04  6.0967E-04  5.0891E-04  4.2991E-04  3.6990E-04  3.2670E-04  2.9877E-04  2.8505E-04
@@ -4979,7 +4919,7 @@ FROM THE SOLVER INPUT FILE.
   65   2.8188E-04  2.9486E-04  3.2125E-04  3.6197E-04  4.1840E-04  4.9241E-04  5.8644E-04  7.0348E-04  8.4718E-04  1.0219E-03
        1.2326E-03  1.4854E-03  1.7870E-03  2.1453E-03  2.5692E-03  3.0688E-03  3.6554E-03  4.3416E-03  5.1414E-03  6.0702E-03
        7.1448E-03  8.3833E-03  9.8055E-03  1.1432E-02  1.3284E-02  1.5386E-02  1.7758E-02  2.0426E-02  2.3410E-02  2.6731E-02
-       3.0409E-02  3.4457E-02  3.8886E-02  4.3699E-02  4.8891E-02  5.4447E-02  6.0339E-02  6.6524E-02  7.2942E-02  7.9514E-02
+       3.0409E-02  3.4457E-02  3.8886E-02  4.3699E-02  4.8891E-02  5.4447E-02  6.0339E-02  6.6524E-02  7.2941E-02  7.9514E-02
        8.6141E-02  9.2704E-02  9.9063E-02  0.1051      0.1105      0.1153      0.1192      0.1222      0.1240      0.1246    
        0.1240      0.1222      0.1192      0.1153      0.1105      0.1051      9.9063E-02  9.2704E-02  8.6141E-02  7.9514E-02
        7.2941E-02  6.6524E-02  6.0339E-02  5.4447E-02  4.8891E-02  4.3699E-02  3.8886E-02  3.4457E-02  3.0409E-02  2.6731E-02
@@ -6376,13 +6316,13 @@ FROM THE SOLVER INPUT FILE.
 
            IN:                                      IN:
            ---                                      ---
-             STORAGE =      175952.4843               STORAGE =       62839.9996
+             STORAGE =      175952.4824               STORAGE =       62839.9996
          CLN STORAGE =           0.0000           CLN STORAGE =           0.0000
        CONSTANT HEAD =           0.0000         CONSTANT HEAD =           0.0000
       CLN CONST HEAD =           0.0000        CLN CONST HEAD =           0.0000
                WELLS =           0.0000                 WELLS =           0.0000
 
-            TOTAL IN =      175952.4843              TOTAL IN =       62839.9996
+            TOTAL IN =      175952.4824              TOTAL IN =       62839.9996
 
           OUT:                                     OUT:
           ----                                     ----
@@ -6394,7 +6334,7 @@ FROM THE SOLVER INPUT FILE.
 
            TOTAL OUT =      175952.4856             TOTAL OUT =       62840.0000
 
-            IN - OUT =      -1.2973E-03              IN - OUT =      -4.4128E-04
+            IN - OUT =      -3.2459E-03              IN - OUT =      -4.4129E-04
 
  PERCENT DISCREPANCY =          -0.00     PERCENT DISCREPANCY =          -0.00
 
@@ -6411,6 +6351,6 @@ FROM THE SOLVER INPUT FILE.
          TOTAL TIME 2.41920E+05  4032.0      67.200      2.8000     7.66598E-03
 1
 
- Run end date and time (yyyy/mm/dd hh:mm:ss): 2013/08/19  8:52:57
- Elapsed run time:  3.357 Seconds
+ Run end date and time (yyyy/mm/dd hh:mm:ss): 2014/03/21  7:20:04
+ Elapsed run time:  3.197 Seconds
 

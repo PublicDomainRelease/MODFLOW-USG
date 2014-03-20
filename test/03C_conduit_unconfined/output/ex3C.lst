@@ -1,6 +1,6 @@
                                   MODFLOW-USG      
       U.S. GEOLOGICAL SURVEY MODULAR FINITE-DIFFERENCE GROUNDWATER FLOW MODEL
-                            VERSION 1.1.00 08/23/2013
+                            VERSION 1.2.00 03/21/2014
 
  LIST FILE: ex3C.lst
                          UNIT    7
@@ -61,7 +61,7 @@
  FILE TYPE:DATA   UNIT   55   STATUS:UNKNOWN
  FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
 
- BAS -- BASIC PACKAGE-USG      1.1.00 08/23/2013                        INPUT READ FROM UNIT    1
+ BAS -- BASIC PACKAGE-USG      1.2.00 03/21/2014                        INPUT READ FROM UNIT    1
  
  # MODFLOW2005 Basic Package                                                     
  #                                                                               
@@ -77,8 +77,8 @@
    1   0
 
  CLN -- CONNECTED LINE NETWORK DISCRETIZATION PROCESS, VERSION 1, 3/3/2012 INPUT READ FROM UNIT   13
- MAXIMUM NUMBER OF CONDUITS (NCLN) =      1
- FLAG (-VE) OR NUMBER OF CONDUIT DOMAIN NODES (+VE) (ICLNNDS) =     -1
+ FLAG (0) OR MAXIMUM NUMBER OF LINEAR NODES (NCLN) =      1
+ FLAG (-VE) OR NUMBER OF LINEAR NODES (+VE) (ICLNNDS) =     -1
  NUMBER OF LINEAR NODE TO MATRIX GRID CONNECTIONS (NCLNGWC) =      2
 
  CELL-BY-CELL FLOWS WILL BE SAVED ON UNIT    35(FLAG ICLNCB IS GREATER THAN ZERO)
@@ -264,10 +264,10 @@ FROM THE SOLVER INPUT FILE.
         3                9                                                                        0.287004E-01                 1           CLN-node number
         4                             0             0           721.152          721.152    
         4                5                                                                        0.187551E-02           1    50    50  lay row col
-        4                5                                                                        0.911782E-03                 1           CLN-node number
+        4                5                                                                        0.911781E-03                 1           CLN-node number
         5                             0             0          0.278626E-01     0.278626E-01
         5                3                                                                       -0.725906E-04           1    77    55  lay row col
-        5                3                                                                        0.946374E-06                 2           CLN-node number
+        5                3                                                                        0.946252E-06                 2           CLN-node number
 
 
      5 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   1 STRESS PERIOD   1
@@ -281,7 +281,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-   -23.068    ,          2  0.19245    ,          1  0.28700E-01,          1  0.91178E-03,          1  0.94637E-06,          2
+   -23.068    ,          2  0.19245    ,          1  0.28700E-01,          1  0.91178E-03,          1  0.94625E-06,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        1
  
@@ -297,7 +297,7 @@ FROM THE SOLVER INPUT FILE.
         2                7                                                                       -0.654949E-02                 1           CLN-node number
         3                             0             0           1.95853          1.95853    
         3                3                                                                        0.145200E-03           1    50    50  lay row col
-        3                3                                                                        0.540305E-05                 2           CLN-node number
+        3                3                                                                        0.540311E-05                 2           CLN-node number
      3 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   2 STRESS PERIOD   1
 
  TOTAL OF       3OUTER ITERATIONS
@@ -353,7 +353,7 @@ FROM THE SOLVER INPUT FILE.
         2                5                                                                       -0.110623E-02                 1           CLN-node number
         3                             0             0           93.3479          93.3479    
         3                3                                                                        0.150345E-03           1    59    60  lay row col
-        3                3                                                                       -0.633736E-05                 2           CLN-node number
+        3                3                                                                       -0.633735E-05                 2           CLN-node number
      3 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   4 STRESS PERIOD   1
 
  TOTAL OF       3OUTER ITERATIONS
@@ -365,7 +365,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.37334    ,          2 -0.11062E-02,          1 -0.63374E-05,          2
+  -0.37334    ,          2 -0.11062E-02,          1 -0.63373E-05,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        4
  
@@ -381,7 +381,7 @@ FROM THE SOLVER INPUT FILE.
         2                5                                                                       -0.740527E-03                 1           CLN-node number
         3                             0             0           295.430          295.430    
         3                3                                                                        0.195591E-03           1    66    67  lay row col
-        3                3                                                                        0.448974E-06                 2           CLN-node number
+        3                3                                                                        0.449028E-06                 2           CLN-node number
      3 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   5 STRESS PERIOD   1
 
  TOTAL OF       3OUTER ITERATIONS
@@ -393,7 +393,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.30521    ,          2 -0.74053E-03,          1  0.44897E-06,          2
+  -0.30521    ,          2 -0.74053E-03,          1  0.44903E-06,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        5
  
@@ -406,10 +406,10 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.270086                     2           CLN-node number
         2                             0             0           67528.8          67528.8    
         2                3                                                                        0.234253E-02           1    50    15  lay row col
-        2                3                                                                       -0.554719E-03                 1           CLN-node number
+        2                3                                                                       -0.554720E-03                 1           CLN-node number
         3                             0             0           675.115          675.115    
         3                4                                                                        0.234241E-03           1    50    15  lay row col
-        3                4                                                                       -0.131859E-04                 2           CLN-node number
+        3                4                                                                       -0.131853E-04                 2           CLN-node number
      3 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   6 STRESS PERIOD   1
 
  TOTAL OF       3OUTER ITERATIONS
@@ -421,7 +421,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.27009    ,          2 -0.55472E-03,          1 -0.13186E-04,          2
+  -0.27009    ,          2 -0.55472E-03,          1 -0.13185E-04,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        6
  
@@ -437,7 +437,7 @@ FROM THE SOLVER INPUT FILE.
         2                5                                                                       -0.482955E-03                 1           CLN-node number
         3                             0             0           1317.26          1317.26    
         3                2                                                                        0.373199E-03           1   100    38  lay row col
-        3                2                                                                        0.128883E-05                 2           CLN-node number
+        3                2                                                                        0.128873E-05                 2           CLN-node number
      3 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   7 STRESS PERIOD   1
 
  TOTAL OF       3OUTER ITERATIONS
@@ -449,7 +449,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.25087    ,          2 -0.48295E-03,          1  0.12888E-05,          2
+  -0.25087    ,          2 -0.48295E-03,          1  0.12887E-05,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP        7
  
@@ -462,10 +462,10 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.239968                     2           CLN-node number
         2                             0             0           33225.6          33225.6    
         2                3                                                                        0.487331E-02           1   100   100  lay row col
-        2                3                                                                       -0.425573E-03                 1           CLN-node number
+        2                3                                                                       -0.425574E-03                 1           CLN-node number
         3                             0             0           332.200          332.200    
         3                2                                                                        0.487221E-03           1   100   100  lay row col
-        3                2                                                                       -0.606496E-05                 2           CLN-node number
+        3                2                                                                       -0.606495E-05                 2           CLN-node number
      3 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP   8 STRESS PERIOD   1
 
  TOTAL OF       3OUTER ITERATIONS
@@ -564,7 +564,7 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.266214               2    29     1  lay row col
         1               12                                                                       -0.226380                     2           CLN-node number
         2                             0             0           2.58251          2.58251    
-        2                3                                                                       -0.153013E-03           2    50    50  lay row col
+        2                3                                                                       -0.153012E-03           2    50    50  lay row col
         2                3                                                                       -0.352374E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  12 STRESS PERIOD   1
 
@@ -765,7 +765,7 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.225141                     2           CLN-node number
         2                             0             0           2.39449          2.39449    
         2                5                                                                       -0.153411E-03           2    50    50  lay row col
-        2                5                                                                       -0.338572E-03                 1           CLN-node number
+        2                5                                                                       -0.338573E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  20 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -865,7 +865,7 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.225881                     2           CLN-node number
         2                             0             0           2.36496          2.36496    
         2                5                                                                       -0.152532E-03           2    50    50  lay row col
-        2                5                                                                       -0.334416E-03                 1           CLN-node number
+        2                5                                                                       -0.334417E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  24 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -890,7 +890,7 @@ FROM THE SOLVER INPUT FILE.
         1               13                                                                       -0.226095                     2           CLN-node number
         2                             0             0           2.35898          2.35898    
         2                5                                                                       -0.156395E-03           2    50    50  lay row col
-        2                5                                                                       -0.337446E-03                 1           CLN-node number
+        2                5                                                                       -0.337447E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  25 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1139,7 +1139,7 @@ FROM THE SOLVER INPUT FILE.
         1               10                                                                       -0.256592               2   100   100  lay row col
         1               10                                                                       -0.228490                     2           CLN-node number
         2                             0             0           2.29031          2.29031    
-        2                4                                                                       -0.147037E-03           2    50    50  lay row col
+        2                4                                                                       -0.147036E-03           2    50    50  lay row col
         2                4                                                                       -0.320411E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  35 STRESS PERIOD   1
 
@@ -1689,7 +1689,7 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.251052               2   100   100  lay row col
         1               12                                                                       -0.233843                     2           CLN-node number
         2                             0             0           1.98354          1.98354    
-        2                4                                                                       -0.126513E-03           2    50    50  lay row col
+        2                4                                                                       -0.126514E-03           2    50    50  lay row col
         2                4                                                                       -0.277860E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  57 STRESS PERIOD   1
 
@@ -1715,7 +1715,7 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.234066                     2           CLN-node number
         2                             0             0           1.96472          1.96472    
         2                4                                                                       -0.126636E-03           2    50    50  lay row col
-        2                4                                                                       -0.276595E-03                 1           CLN-node number
+        2                4                                                                       -0.276596E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  58 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1739,8 +1739,8 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.250671               2   100   100  lay row col
         1               12                                                                       -0.234286                     2           CLN-node number
         2                             0             0           1.94554          1.94554    
-        2                4                                                                       -0.126114E-03           2    50    50  lay row col
-        2                4                                                                       -0.274929E-03                 1           CLN-node number
+        2                4                                                                       -0.126115E-03           2    50    50  lay row col
+        2                4                                                                       -0.274930E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  59 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1764,8 +1764,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.250489               2   100   100  lay row col
         1               11                                                                       -0.234503                     2           CLN-node number
         2                             0             0           1.92603          1.92603    
-        2                4                                                                       -0.120465E-03           2    50    50  lay row col
-        2                4                                                                       -0.268437E-03                 1           CLN-node number
+        2                4                                                                       -0.120466E-03           2    50    50  lay row col
+        2                4                                                                       -0.268439E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  60 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1789,8 +1789,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.250309               2   100   100  lay row col
         1               11                                                                       -0.234720                     2           CLN-node number
         2                             0             0           1.90623          1.90623    
-        2                3                                                                       -0.118792E-03           2    50    50  lay row col
-        2                3                                                                       -0.265302E-03                 1           CLN-node number
+        2                3                                                                       -0.118793E-03           2    50    50  lay row col
+        2                3                                                                       -0.265304E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  61 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1815,7 +1815,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.234934                     2           CLN-node number
         2                             0             0           1.88611          1.88611    
         2                3                                                                       -0.117940E-03           2    50    50  lay row col
-        2                3                                                                       -0.263067E-03                 1           CLN-node number
+        2                3                                                                       -0.263068E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  62 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1839,8 +1839,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.249963               2   100   100  lay row col
         1               11                                                                       -0.235145                     2           CLN-node number
         2                             0             0           1.86569          1.86569    
-        2                3                                                                       -0.117710E-03           2    50    50  lay row col
-        2                3                                                                       -0.261512E-03                 1           CLN-node number
+        2                3                                                                       -0.117708E-03           2    50    50  lay row col
+        2                3                                                                       -0.261510E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  63 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1863,21 +1863,21 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           447353.          447353.    
         1               12                                                                       -0.249795               2   100   100  lay row col
         1               12                                                                       -0.235353                     2           CLN-node number
-        2                             0             0           1.84498          1.84498    
-        2                4                                                                       -0.119727E-03           2    50    50  lay row col
-        2                4                                                                       -0.262061E-03                 1           CLN-node number
+        2                             0             0           1.84497          1.84497    
+        2                4                                                                       -0.119646E-03           2    50    50  lay row col
+        2                4                                                                       -0.261973E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  64 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2498     (    2,  100,  100) -0.1197E-03 (    2,   50,   50)
+  -0.2498     (    2,  100,  100) -0.1196E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23535    ,          2 -0.26206E-03,          1
+  -0.23535    ,          2 -0.26197E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       64
  
@@ -1889,20 +1889,20 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.249633               2   100   100  lay row col
         1               12                                                                       -0.235557                     2           CLN-node number
         2                             0             0           1.82400          1.82400    
-        2                4                                                                       -0.120241E-03           2    50    50  lay row col
-        2                4                                                                       -0.261211E-03                 1           CLN-node number
+        2                4                                                                       -0.120255E-03           2    50    50  lay row col
+        2                4                                                                       -0.261226E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  65 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2496     (    2,  100,  100) -0.1202E-03 (    2,   50,   50)
+  -0.2496     (    2,  100,  100) -0.1203E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23556    ,          2 -0.26121E-03,          1
+  -0.23556    ,          2 -0.26123E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       65
  
@@ -1913,9 +1913,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           444156.          444156.    
         1               12                                                                       -0.249476               2   100   100  lay row col
         1               12                                                                       -0.235758                     2           CLN-node number
-        2                             0             0           1.80277          1.80277    
-        2                6                                                                       -0.116050E-03           2    50    50  lay row col
-        2                6                                                                       -0.255994E-03                 1           CLN-node number
+        2                             0             0           1.80278          1.80278    
+        2                6                                                                       -0.116049E-03           2    50    50  lay row col
+        2                6                                                                       -0.255989E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  66 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1938,9 +1938,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           442568.          442568.    
         1               12                                                                       -0.249322               2   100   100  lay row col
         1               12                                                                       -0.235959                     2           CLN-node number
-        2                             0             0           1.78136          1.78136    
-        2                6                                                                       -0.114958E-03           2    50    50  lay row col
-        2                6                                                                       -0.253558E-03                 1           CLN-node number
+        2                             0             0           1.78137          1.78137    
+        2                6                                                                       -0.114976E-03           2    50    50  lay row col
+        2                6                                                                       -0.253572E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  67 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1952,7 +1952,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23596    ,          2 -0.25356E-03,          1
+  -0.23596    ,          2 -0.25357E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       67
  
@@ -1964,8 +1964,8 @@ FROM THE SOLVER INPUT FILE.
         1               12                                                                       -0.249173               2   100   100  lay row col
         1               12                                                                       -0.236156                     2           CLN-node number
         2                             0             0           1.75971          1.75971    
-        2                6                                                                       -0.113914E-03           2    50    50  lay row col
-        2                6                                                                       -0.251180E-03                 1           CLN-node number
+        2                6                                                                       -0.113918E-03           2    50    50  lay row col
+        2                6                                                                       -0.251183E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  68 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -1988,21 +1988,21 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           439419.          439419.    
         1               12                                                                       -0.249027               2   100   100  lay row col
         1               12                                                                       -0.236350                     2           CLN-node number
-        2                             0             0           1.73782          1.73782    
-        2                4                                                                       -0.122623E-03           2    50    50  lay row col
-        2                4                                                                       -0.257442E-03                 1           CLN-node number
+        2                             0             0           1.73781          1.73781    
+        2                4                                                                       -0.122051E-03           2    50    50  lay row col
+        2                4                                                                       -0.256901E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  69 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2490     (    2,  100,  100) -0.1226E-03 (    2,   50,   50)
+  -0.2490     (    2,  100,  100) -0.1221E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23635    ,          2 -0.25744E-03,          1
+  -0.23635    ,          2 -0.25690E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       69
  
@@ -2011,23 +2011,23 @@ FROM THE SOLVER INPUT FILE.
  Outer-Iteration  Inner-Iteration  Backtracking  Number of        Incoming       Outgoing  Maximum HeadChange      Maximum Head Change
      Number           Count           Flag       Backtracks       Residual       Residual           Value              Location
         1                             0             0           437857.          437857.    
-        1               12                                                                       -0.248885               2   100   100  lay row col
+        1               12                                                                       -0.248884               2   100   100  lay row col
         1               12                                                                       -0.236537                     2           CLN-node number
-        2                             0             0           1.71565          1.71565    
-        2                4                                                                       -0.113836E-03           2    50    50  lay row col
-        2                4                                                                       -0.248147E-03                 1           CLN-node number
+        2                             0             0           1.71560          1.71560    
+        2                4                                                                       -0.113274E-03           2    50    50  lay row col
+        2                4                                                                       -0.247762E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  70 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2489     (    2,  100,  100) -0.1138E-03 (    2,   50,   50)
+  -0.2489     (    2,  100,  100) -0.1133E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23654    ,          2 -0.24815E-03,          1
+  -0.23654    ,          2 -0.24776E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       70
  
@@ -2038,21 +2038,21 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           436306.          436306.    
         1               12                                                                       -0.248746               2   100   100  lay row col
         1               12                                                                       -0.236727                     2           CLN-node number
-        2                             0             0           1.69355          1.69355    
-        2                4                                                                       -0.111925E-03           2    50    50  lay row col
-        2                4                                                                       -0.245091E-03                 1           CLN-node number
+        2                             0             0           1.69356          1.69356    
+        2                4                                                                       -0.111952E-03           2    50    50  lay row col
+        2                4                                                                       -0.245139E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  71 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2487     (    2,  100,  100) -0.1119E-03 (    2,   50,   50)
+  -0.2487     (    2,  100,  100) -0.1120E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23673    ,          2 -0.24509E-03,          1
+  -0.23673    ,          2 -0.24514E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       71
  
@@ -2063,21 +2063,21 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           434764.          434764.    
         1               12                                                                       -0.248611               2   100   100  lay row col
         1               12                                                                       -0.236913                     2           CLN-node number
-        2                             0             0           1.67125          1.67125    
-        2                3                                                                       -0.105963E-03           2    50    50  lay row col
-        2                3                                                                       -0.239097E-03                 1           CLN-node number
+        2                             0             0           1.67129          1.67129    
+        2                3                                                                       -0.107920E-03           2    50    50  lay row col
+        2                3                                                                       -0.240943E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  72 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2486     (    2,  100,  100) -0.1060E-03 (    2,   50,   50)
+  -0.2486     (    2,  100,  100) -0.1079E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23691    ,          2 -0.23910E-03,          1
+  -0.23691    ,          2 -0.24094E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       72
  
@@ -2088,21 +2088,21 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           433233.          433233.    
         1               12                                                                       -0.248479               2   100   100  lay row col
         1               12                                                                       -0.237095                     2           CLN-node number
-        2                             0             0           1.64884          1.64884    
-        2                4                                                                       -0.111164E-03           2    50    50  lay row col
-        2                4                                                                       -0.242124E-03                 1           CLN-node number
+        2                             0             0           1.64888          1.64888    
+        2                5                                                                       -0.108415E-03           2    50    50  lay row col
+        2                5                                                                       -0.238903E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  73 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2485     (    2,  100,  100) -0.1112E-03 (    2,   50,   50)
+  -0.2485     (    2,  100,  100) -0.1084E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23710    ,          2 -0.24212E-03,          1
+  -0.23709    ,          2 -0.23890E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       73
  
@@ -2112,22 +2112,22 @@ FROM THE SOLVER INPUT FILE.
      Number           Count           Flag       Backtracks       Residual       Residual           Value              Location
         1                             0             0           431712.          431712.    
         1               12                                                                       -0.248351               2   100   100  lay row col
-        1               12                                                                       -0.237275                     2           CLN-node number
-        2                             0             0           1.62654          1.62654    
-        2                4                                                                       -0.108194E-03           2    50    50  lay row col
-        2                4                                                                       -0.237123E-03                 1           CLN-node number
+        1               12                                                                       -0.237277                     2           CLN-node number
+        2                             0             0           1.62661          1.62661    
+        2                4                                                                       -0.108073E-03           2    50    50  lay row col
+        2                4                                                                       -0.237011E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  74 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2484     (    2,  100,  100) -0.1082E-03 (    2,   50,   50)
+  -0.2484     (    2,  100,  100) -0.1081E-03 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23728    ,          2 -0.23712E-03,          1
+  -0.23728    ,          2 -0.23701E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       74
  
@@ -2138,9 +2138,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           430203.          430203.    
         1               12                                                                       -0.248227               2   100   100  lay row col
         1               12                                                                       -0.237454                     2           CLN-node number
-        2                             0             0           1.60419          1.60419    
-        2                4                                                                       -0.106287E-03           2    50    50  lay row col
-        2                4                                                                       -0.233989E-03                 1           CLN-node number
+        2                             0             0           1.60420          1.60420    
+        2                4                                                                       -0.106283E-03           2    50    50  lay row col
+        2                4                                                                       -0.233988E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  75 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2164,8 +2164,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.248106               2   100   100  lay row col
         1               11                                                                       -0.237628                     2           CLN-node number
         2                             0             0           1.58202          1.58202    
-        2                3                                                                       -0.103995E-03           2    50    50  lay row col
-        2                3                                                                       -0.230384E-03                 1           CLN-node number
+        2                3                                                                       -0.103990E-03           2    50    50  lay row col
+        2                3                                                                       -0.230380E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  76 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2190,7 +2190,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.237800                     2           CLN-node number
         2                             0             0           1.55937          1.55937    
         2                3                                                                        0.100541E-03           1    50    50  lay row col
-        2                3                                                                       -0.224200E-03                 1           CLN-node number
+        2                3                                                                       -0.224199E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  77 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2214,8 +2214,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.247874               2   100   100  lay row col
         1               11                                                                       -0.237970                     2           CLN-node number
         2                             0             0           1.53697          1.53697    
-        2                4                                                                       -0.102135E-03           2    50    50  lay row col
-        2                4                                                                       -0.225941E-03                 1           CLN-node number
+        2                4                                                                       -0.102130E-03           2    50    50  lay row col
+        2                4                                                                       -0.225937E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  78 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2239,8 +2239,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.247762               2   100   100  lay row col
         1               11                                                                       -0.238135                     2           CLN-node number
         2                             0             0           1.51479          1.51479    
-        2                5                                                                       -0.100738E-03           2    50    50  lay row col
-        2                5                                                                       -0.223213E-03                 1           CLN-node number
+        2                5                                                                       -0.100709E-03           2    50    50  lay row col
+        2                5                                                                       -0.223186E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  79 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2252,7 +2252,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23814    ,          2 -0.22321E-03,          1
+  -0.23814    ,          2 -0.22319E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       79
  
@@ -2264,20 +2264,20 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.247654               2   100   100  lay row col
         1               11                                                                       -0.238298                     2           CLN-node number
         2                             0             0           1.49266          1.49266    
-        2                4                                                                        0.988140E-04           1    50    50  lay row col
-        2                4                                                                       -0.219551E-03                 1           CLN-node number
+        2                4                                                                        0.988152E-04           1    50    50  lay row col
+        2                4                                                                       -0.219535E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  80 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2477     (    2,  100,  100)  0.9881E-04 (    1,   50,   50)
+  -0.2477     (    2,  100,  100)  0.9882E-04 (    1,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23830    ,          2 -0.21955E-03,          1
+  -0.23830    ,          2 -0.21953E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       80
  
@@ -2289,8 +2289,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.247548               2   100   100  lay row col
         1               11                                                                       -0.238458                     2           CLN-node number
         2                             0             0           1.47019          1.47019    
-        2                3                                                                        0.983524E-04           1    50    50  lay row col
-        2                3                                                                       -0.215850E-03                 1           CLN-node number
+        2                3                                                                        0.983534E-04           1    50    50  lay row col
+        2                3                                                                       -0.215836E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  81 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2302,7 +2302,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23846    ,          2 -0.21585E-03,          1
+  -0.23846    ,          2 -0.21584E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       81
  
@@ -2314,7 +2314,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.247446               2   100   100  lay row col
         1               11                                                                       -0.238616                     2           CLN-node number
         2                             0             0           1.44751          1.44751    
-        2                5                                                                       -0.987989E-04           2    50    50  lay row col
+        2                5                                                                       -0.987997E-04           2    50    50  lay row col
         2                5                                                                       -0.216943E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  82 STRESS PERIOD   1
 
@@ -2339,20 +2339,20 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.247347               2   100   100  lay row col
         1               11                                                                       -0.238770                     2           CLN-node number
         2                             0             0           1.42481          1.42481    
-        2                4                                                                       -0.983891E-04           2    50    50  lay row col
-        2                4                                                                       -0.215129E-03                 1           CLN-node number
+        2                4                                                                       -0.983967E-04           2    50    50  lay row col
+        2                4                                                                       -0.215137E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  83 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2473     (    2,  100,  100) -0.9839E-04 (    2,   50,   50)
+  -0.2473     (    2,  100,  100) -0.9840E-04 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23877    ,          2 -0.21513E-03,          1
+  -0.23877    ,          2 -0.21514E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       83
  
@@ -2489,8 +2489,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.246808               2   100   100  lay row col
         1               11                                                                       -0.239640                     2           CLN-node number
         2                             0             0           1.29131          1.29131    
-        2                3                                                                       -0.931418E-04           2    50    50  lay row col
-        2                3                                                                       -0.202276E-03                 1           CLN-node number
+        2                3                                                                       -0.931395E-04           2    50    50  lay row col
+        2                3                                                                       -0.202273E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  89 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2502,7 +2502,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23964    ,          2 -0.20228E-03,          1
+  -0.23964    ,          2 -0.20227E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       89
  
@@ -2514,8 +2514,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.246727               2   100   100  lay row col
         1               11                                                                       -0.239773                     2           CLN-node number
         2                             0             0           1.26948          1.26948    
-        2                3                                                                        0.923619E-04           1    50    50  lay row col
-        2                3                                                                       -0.199075E-03                 1           CLN-node number
+        2                3                                                                        0.923621E-04           1    50    50  lay row col
+        2                3                                                                       -0.199073E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  90 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2527,7 +2527,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23977    ,          2 -0.19908E-03,          1
+  -0.23977    ,          2 -0.19907E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       90
  
@@ -2540,7 +2540,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.239906                     2           CLN-node number
         2                             0             0           1.24785          1.24785    
         2                3                                                                        0.917125E-04           1    50    50  lay row col
-        2                3                                                                       -0.196074E-03                 1           CLN-node number
+        2                3                                                                       -0.196075E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  91 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2552,7 +2552,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.23991    ,          2 -0.19607E-03,          1
+  -0.23991    ,          2 -0.19608E-03,          1
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP       91
  
@@ -2564,8 +2564,8 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.246573               2   100   100  lay row col
         1               11                                                                       -0.240038                     2           CLN-node number
         2                             0             0           1.22639          1.22639    
-        2                3                                                                        0.910446E-04           1    50    50  lay row col
-        2                3                                                                       -0.193210E-03                 1           CLN-node number
+        2                3                                                                        0.910445E-04           1    50    50  lay row col
+        2                3                                                                       -0.193211E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  92 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2589,7 +2589,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.246500               2   100   100  lay row col
         1               11                                                                       -0.240166                     2           CLN-node number
         2                             0             0           1.20511          1.20511    
-        2                3                                                                        0.903645E-04           1    50    50  lay row col
+        2                3                                                                        0.903644E-04           1    50    50  lay row col
         2                3                                                                       -0.190392E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  93 STRESS PERIOD   1
 
@@ -2615,7 +2615,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.240292                     2           CLN-node number
         2                             0             0           1.18401          1.18401    
         2                3                                                                        0.896749E-04           1    50    50  lay row col
-        2                3                                                                       -0.187590E-03                 1           CLN-node number
+        2                3                                                                       -0.187589E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  94 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2640,7 +2640,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.240416                     2           CLN-node number
         2                             0             0           1.16311          1.16311    
         2                3                                                                        0.889742E-04           1    50    50  lay row col
-        2                3                                                                       -0.184843E-03                 1           CLN-node number
+        2                3                                                                       -0.184842E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  95 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2690,7 +2690,7 @@ FROM THE SOLVER INPUT FILE.
         1               11                                                                       -0.240657                     2           CLN-node number
         2                             0             0           1.12194          1.12194    
         2                3                                                                        0.875145E-04           1    50    50  lay row col
-        2                3                                                                       -0.179992E-03                 1           CLN-node number
+        2                3                                                                       -0.179991E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP  97 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -2764,8 +2764,8 @@ FROM THE SOLVER INPUT FILE.
         1               10                                                                       -0.246055               2   100   100  lay row col
         1               10                                                                       -0.240994                     2           CLN-node number
         2                             0             0           1.06206          1.06206    
-        2                3                                                                        0.849235E-04           1    50    50  lay row col
-        2                3                                                                       -0.179037E-03                 1           CLN-node number
+        2                3                                                                        0.849234E-04           1    50    50  lay row col
+        2                3                                                                       -0.179038E-03                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 100 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -3038,20 +3038,20 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           385036.          385036.    
         1               10                                                                       -0.245528               2   100   100  lay row col
         1               10                                                                       -0.242084                     2           CLN-node number
-        2                             0             0          0.672030E+09     0.672030E+09
-        2                9                                                                        0.126261E-01           2    50    50  lay row col
-        2                9                                                                        0.278691E-01                 2           CLN-node number
-        3                             0             0          0.348870E+08     0.348870E+08
+        2                             0             0          0.672037E+09     0.672037E+09
+        2                9                                                                        0.126262E-01           2    50    50  lay row col
+        2                9                                                                        0.278693E-01                 2           CLN-node number
+        3                             0             0          0.348872E+08     0.348872E+08
         3                7                                                                        0.467141E-02           2    50    50  lay row col
         3                7                                                                        0.103131E-01                 2           CLN-node number
-        4                             0             0          0.182923E+07     0.182923E+07
-        4                6                                                                        0.205765E-02           2    50    50  lay row col
-        4                6                                                                        0.454141E-02                 2           CLN-node number
-        5                             0             0           67331.2          67331.2    
-        5                5                                                                        0.793960E-03           2    50    50  lay row col
-        5                5                                                                        0.175198E-02                 2           CLN-node number
-        6                             0             0           531.342          531.342    
-        6                3                                                                        0.120860E-03           2    50    50  lay row col
+        4                             0             0          0.182924E+07     0.182924E+07
+        4                6                                                                        0.205766E-02           2    50    50  lay row col
+        4                6                                                                        0.454142E-02                 2           CLN-node number
+        5                             0             0           67331.6          67331.6    
+        5                5                                                                        0.793961E-03           2    50    50  lay row col
+        5                5                                                                        0.175199E-02                 2           CLN-node number
+        6                             0             0           531.346          531.346    
+        6                3                                                                        0.120861E-03           2    50    50  lay row col
         6                3                                                                        0.267366E-03                 2           CLN-node number
      6 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 111 STRESS PERIOD   1
 
@@ -3076,28 +3076,28 @@ FROM THE SOLVER INPUT FILE.
      Number           Count           Flag       Backtracks       Residual       Residual           Value              Location
         1                             0             0           382058.          382058.    
         1               12                                                                       -0.245093               2   100   100  lay row col
-        1               12                                                                       -0.894507E-02                 1           CLN-node number
-        2                             0             0          0.225991E+07     0.225991E+07
-        2                6                                                                        0.183810E-02           2    50    50  lay row col
-        2                6                                                                        0.406224E-02                 2           CLN-node number
-        3                             0             0           88329.2          88329.2    
-        3                5                                                                        0.523650E-03           2    50    50  lay row col
-        3                5                                                                        0.115496E-02                 2           CLN-node number
-        4                             0             0           123.169          123.169    
-        4                2                                                                        0.229029E-04           2    50    50  lay row col
-        4                2                                                                        0.502595E-04                 2           CLN-node number
+        1               12                                                                       -0.894505E-02                 1           CLN-node number
+        2                             0             0          0.225989E+07     0.225989E+07
+        2                6                                                                        0.183809E-02           2    50    50  lay row col
+        2                6                                                                        0.406223E-02                 2           CLN-node number
+        3                             0             0           88328.4          88328.4    
+        3                5                                                                        0.523648E-03           2    50    50  lay row col
+        3                5                                                                        0.115495E-02                 2           CLN-node number
+        4                             0             0           123.166          123.166    
+        4                2                                                                        0.229026E-04           2    50    50  lay row col
+        4                2                                                                        0.502589E-04                 2           CLN-node number
      4 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 112 STRESS PERIOD   1
 
  TOTAL OF       4OUTER ITERATIONS
   MAXIMUM CHANGE FOR EACH ITERATION:
   MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL MAX. CHANGE   LAYER,  ROW,  COL
  ------------------------------------------------------------------------------------------------------------------------------------------
-  -0.2451     (    2,  100,  100)  0.1838E-02 (    2,   50,   50)  0.5237E-03 (    2,   50,   50)  0.2290E-04 (    2,   50,   50)
+  -0.2451     (    2,  100,  100)  0.1838E-02 (    2,   50,   50)  0.5236E-03 (    2,   50,   50)  0.2290E-04 (    2,   50,   50)
 
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.89451E-02,          1  0.40622E-02,          2  0.11550E-02,          2  0.50260E-04,          2
+  -0.89450E-02,          1  0.40622E-02,          2  0.11550E-02,          2  0.50259E-04,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP      112
  
@@ -3108,9 +3108,9 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           371171.          371171.    
         1               12                                                                       -0.244207               2   100   100  lay row col
         1               12                                                                       -0.292279E-02                 1           CLN-node number
-        2                             0             0           34033.2          34033.2    
+        2                             0             0           34033.1          34033.1    
         2                4                                                                        0.265223E-03           2    50    50  lay row col
-        2                4                                                                        0.590275E-03                 2           CLN-node number
+        2                4                                                                        0.590274E-03                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 113 STRESS PERIOD   1
 
  TOTAL OF       2OUTER ITERATIONS
@@ -3233,7 +3233,7 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           330800.          330800.    
         1               12                                                                       -0.234282               2   100   100  lay row col
         1               12                                                                       -0.123774E-02                 1           CLN-node number
-        2                             0             0           1324.90          1324.90    
+        2                             0             0           1324.89          1324.89    
         2                2                                                                        0.313883E-04           2    50    50  lay row col
         2                2                                                                        0.724402E-04                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 118 STRESS PERIOD   1
@@ -3272,7 +3272,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.11468E-02,          1  0.59094E-04,          2
+  -0.11468E-02,          1  0.59093E-04,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP      119
  
@@ -3283,7 +3283,7 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           316669.          316669.    
         1               12                                                                       -0.229390               2   100   100  lay row col
         1               12                                                                       -0.107314E-02                 1           CLN-node number
-        2                             0             0           750.686          750.686    
+        2                             0             0           750.685          750.685    
         2                2                                                                        0.214788E-04           2    50    50  lay row col
         2                2                                                                        0.493934E-04                 2           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 120 STRESS PERIOD   1
@@ -3358,14 +3358,14 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           296931.          296931.    
         1               12                                                                       -0.222028               2   100   100  lay row col
         1               12                                                                       -0.914192E-03                 1           CLN-node number
-        2                             0             0           484665.          484665.    
+        2                             0             0           484666.          484666.    
         2                9                                                                        0.333361E-01           2    50    50  lay row col
-        2                9                                                                       -0.997887E-04                 2           CLN-node number
+        2                9                                                                       -0.997888E-04                 2           CLN-node number
         3                             0             0           4258.21          4258.21    
         3                7                                                                        0.330426E-02           2    50    50  lay row col
-        3                7                                                                        0.234437E-05                 2           CLN-node number
+        3                7                                                                        0.234438E-05                 2           CLN-node number
         4                             0             0           3.66521          3.66521    
-        4                2                                                                        0.971557E-04           2    50    50  lay row col
+        4                2                                                                        0.971558E-04           2    50    50  lay row col
         4                2                                                                        0.173814E-06                 2           CLN-node number
      4 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 123 STRESS PERIOD   1
 
@@ -4116,12 +4116,12 @@ FROM THE SOLVER INPUT FILE.
         1               13                                                                       -0.477560E-03                 1           CLN-node number
         2                             0             0           136813.          136813.    
         2               11                                                                        0.220051E-01           2    50    49  lay row col
-        2               11                                                                        0.835572E-04                 2           CLN-node number
+        2               11                                                                        0.835573E-04                 2           CLN-node number
         3                             0             0           1345.67          1345.67    
-        3                7                                                                        0.219168E-02           2    50    49  lay row col
-        3                7                                                                        0.824244E-05                 2           CLN-node number
-        4                             0             0           1.20411          1.20411    
-        4                2                                                                        0.632795E-04           2    50    49  lay row col
+        3                7                                                                        0.219169E-02           2    50    49  lay row col
+        3                7                                                                        0.824245E-05                 2           CLN-node number
+        4                             0             0           1.20412          1.20412    
+        4                2                                                                        0.632796E-04           2    50    49  lay row col
         4                2                                                                        0.205023E-06                 2           CLN-node number
      4 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 153 STRESS PERIOD   1
 
@@ -4134,7 +4134,7 @@ FROM THE SOLVER INPUT FILE.
   MAXIMUM CHANGE FOR CLN NODE AT EACH ITERATION:
    MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL  MAX. CHANGE    CLN-CELL
  ------------------------------------------------------------------------------------------------------------------------------------
-  -0.47756E-03,          1  0.83557E-04,          2  0.82424E-05,          2  0.20502E-06,          2
+  -0.47756E-03,          1  0.83557E-04,          2  0.82425E-05,          2  0.20502E-06,          2
 
  NO OUTPUT CONTROL FOR STRESS PERIOD        1   TIME STEP      153
  
@@ -4246,7 +4246,7 @@ FROM THE SOLVER INPUT FILE.
         1               13                                                                       -0.133952               2   100   100  lay row col
         1               13                                                                       -0.465323E-03                 1           CLN-node number
         2                             0             0           10.6235          10.6235    
-        2                2                                                                       -0.600676E-04           2    50    51  lay row col
+        2                2                                                                       -0.600677E-04           2    50    51  lay row col
         2                2                                                                        0.304965E-05                 1           CLN-node number
      2 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 158 STRESS PERIOD   1
 
@@ -4295,14 +4295,14 @@ FROM THE SOLVER INPUT FILE.
         1                             0             0           230707.          230707.    
         1               13                                                                       -0.129827               2   100   100  lay row col
         1               13                                                                       -0.450693E-03                 1           CLN-node number
-        2                             0             0           46309.6          46309.6    
+        2                             0             0           46309.7          46309.7    
         2               10                                                                        0.134029E-01           2    49    49  lay row col
         2               10                                                                        0.495618E-04                 2           CLN-node number
-        3                             0             0           458.801          458.801    
+        3                             0             0           458.802          458.802    
         3                6                                                                        0.133612E-02           2    49    49  lay row col
         3                6                                                                        0.489128E-05                 2           CLN-node number
-        4                             0             0          0.411711         0.411711    
-        4                2                                                                        0.391783E-04           2    49    49  lay row col
+        4                             0             0          0.411712         0.411712    
+        4                2                                                                        0.391784E-04           2    49    49  lay row col
         4                2                                                                        0.132719E-06                 2           CLN-node number
      4 CALLS TO SPARSE MATRIX SOLVER PACKAGE  IN FLOW TIME STEP 160 STRESS PERIOD   1
 
@@ -5399,7 +5399,7 @@ FROM THE SOLVER INPUT FILE.
        -6.575      -6.581      -6.587      -6.593      -6.599      -6.605      -6.612      -6.618      -6.624      -6.630    
        -6.636      -6.642      -6.647      -6.653      -6.658      -6.663      -6.668      -6.673      -6.677      -6.681    
        -6.684      -6.688      -6.690      -6.693      -6.695      -6.697      -6.698      -6.698      -6.699      -6.699    
-       -6.698      -6.697      -6.695      -6.693      -6.691      -6.688      -6.685      -6.681      -6.678      -6.673    
+       -6.698      -6.697      -6.695      -6.693      -6.691      -6.688      -6.685      -6.682      -6.678      -6.673    
        -6.669      -6.664      -6.658      -6.653      -6.647      -6.641      -6.635      -6.628      -6.622      -6.615    
        -6.608      -6.601      -6.594      -6.588      -6.581      -6.574      -6.567      -6.560      -6.554      -6.547    
        -6.541      -6.535      -6.529      -6.524      -6.518      -6.513      -6.508      -6.503      -6.499      -6.495    
@@ -6027,7 +6027,7 @@ FROM THE SOLVER INPUT FILE.
   67   -6.629      -6.630      -6.632      -6.635      -6.638      -6.642      -6.648      -6.654      -6.661      -6.669    
        -6.677      -6.687      -6.697      -6.709      -6.721      -6.734      -6.748      -6.763      -6.779      -6.796    
        -6.813      -6.832      -6.851      -6.872      -6.893      -6.914      -6.937      -6.960      -6.984      -7.009    
-       -7.035      -7.060      -7.087      -7.113      -7.140      -7.167      -7.194      -7.221      -7.247      -7.272    
+       -7.035      -7.061      -7.087      -7.113      -7.140      -7.167      -7.194      -7.221      -7.247      -7.272    
        -7.296      -7.319      -7.340      -7.359      -7.376      -7.390      -7.401      -7.409      -7.414      -7.415    
        -7.413      -7.408      -7.399      -7.387      -7.372      -7.354      -7.334      -7.312      -7.289      -7.264    
        -7.238      -7.211      -7.184      -7.156      -7.128      -7.101      -7.073      -7.046      -7.019      -6.993    
@@ -6402,7 +6402,7 @@ FROM THE SOLVER INPUT FILE.
        3.5803E-04  3.6030E-04  3.6270E-04  3.6523E-04  3.6787E-04  3.7061E-04  3.7342E-04  3.7627E-04  3.7914E-04  3.8197E-04
        3.8474E-04  3.8740E-04  3.8990E-04  3.9221E-04  3.9427E-04  3.9606E-04  3.9754E-04  3.9868E-04  3.9945E-04  3.9984E-04
    3   3.7796E-04  3.7772E-04  3.7726E-04  3.7657E-04  3.7567E-04  3.7459E-04  3.7334E-04  3.7194E-04  3.7042E-04  3.6881E-04
-       3.6713E-04  3.6541E-04  3.6367E-04  3.6194E-04  3.6022E-04  3.5854E-04  3.5690E-04  3.5533E-04  3.5382E-04  3.5238E-04
+       3.6714E-04  3.6541E-04  3.6367E-04  3.6194E-04  3.6022E-04  3.5854E-04  3.5690E-04  3.5533E-04  3.5382E-04  3.5238E-04
        3.5101E-04  3.4971E-04  3.4848E-04  3.4732E-04  3.4622E-04  3.4518E-04  3.4421E-04  3.4329E-04  3.4242E-04  3.4162E-04
        3.4087E-04  3.4018E-04  3.3955E-04  3.3899E-04  3.3849E-04  3.3805E-04  3.3768E-04  3.3737E-04  3.3712E-04  3.3693E-04
        3.3679E-04  3.3670E-04  3.3664E-04  3.3662E-04  3.3661E-04  3.3662E-04  3.3663E-04  3.3664E-04  3.3664E-04  3.3664E-04
@@ -8423,13 +8423,13 @@ FROM THE SOLVER INPUT FILE.
 
            IN:                                      IN:
            ---                                      ---
-             STORAGE =     9328540.1809               STORAGE =       36028.4240
+             STORAGE =     9328540.1962               STORAGE =       36028.4238
          CLN STORAGE =           0.0000           CLN STORAGE =           0.0000
        CONSTANT HEAD =           0.0000         CONSTANT HEAD =           0.0000
       CLN CONST HEAD =           0.0000        CLN CONST HEAD =           0.0000
                WELLS =           0.0000                 WELLS =           0.0000
 
-            TOTAL IN =     9328540.1809              TOTAL IN =       36028.4240
+            TOTAL IN =     9328540.1962              TOTAL IN =       36028.4238
 
           OUT:                                     OUT:
           ----                                     ----
@@ -8437,11 +8437,11 @@ FROM THE SOLVER INPUT FILE.
          CLN STORAGE =           0.0000           CLN STORAGE =           0.0000
        CONSTANT HEAD =           0.0000         CONSTANT HEAD =           0.0000
       CLN CONST HEAD =           0.0000        CLN CONST HEAD =           0.0000
-               WELLS =     9328169.8945                 WELLS =       36027.0391
+               WELLS =     9328169.8672                 WELLS =       36027.0391
 
-           TOTAL OUT =     9328622.1649             TOTAL OUT =       36027.3598
+           TOTAL OUT =     9328622.1375             TOTAL OUT =       36027.3598
 
-            IN - OUT =         -81.9840              IN - OUT =           1.0641
+            IN - OUT =         -81.9413              IN - OUT =           1.0640
 
  PERCENT DISCREPANCY =          -0.00     PERCENT DISCREPANCY =           0.00
 
@@ -8458,6 +8458,6 @@ FROM THE SOLVER INPUT FILE.
          TOTAL TIME 1.38240E+07 2.30400E+05  3840.0      160.00     0.43806    
 1
 
- Run end date and time (yyyy/mm/dd hh:mm:ss): 2013/08/19  8:59:03
- Elapsed run time: 23.028 Seconds
+ Run end date and time (yyyy/mm/dd hh:mm:ss): 2014/03/21  7:24:57
+ Elapsed run time: 20.587 Seconds
 

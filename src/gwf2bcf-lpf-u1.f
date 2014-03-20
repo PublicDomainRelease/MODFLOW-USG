@@ -573,7 +573,7 @@ C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL,   ONLY:IOUT,NCOL,NROW,NLAY,ITRSS,LAYHDT,LAYHDS,IFREFM,
      1              IUNSTR,NODES,NJA,NJAS,NJAG,IA,PGF,FAHL,ARAD,JA,JAS,
-     2              NODLAY,IDSYMRD,IATMP,NJATMP
+     2              NODLAY,IDSYMRD,IATMP,NJATMP,TOP,BOT,CL1,CL2
       USE GWFBCFMODULE,ONLY:IBCFCB,IWDFLG,IWETIT,IHDWET,WETFCT,HDRY,CV,
      1                      LAYCON,LAYAVG,HK,SC1,SC2,WETDRY,IHANISO,
      2                      IKCFLAG,IKVFLAG,laywet
@@ -674,17 +674,43 @@ C3G-----READ EFFECTIVE SATURATED CONDUCTIVITY OF CONNECTION
         ALLOCATE(TEMP(NJAS))
         CALL U1DRELNJA(TEMP(1),IATMP,ANAME(3),NJATMP,IN,IOUT,IDSYMRD)
         DO N=1,NODES
+          THICK1 = TOP(N) - BOT(N)
           DO II = IA(N)+1,IA(N+1)-1
             JJ = JA(II)
-            IF(JJ.LE.N) CYCLE
+            IF(JJ.LE.N.OR.JJ.GT.NODES) CYCLE
             IIS = JAS(II)
             IF(IKCFLAG.EQ.1)THEN
-              PGF(IIS) = PGF(IIS) * TEMP(IIS)
+              THICK2 = TOP(JJ) - BOT(JJ)
+              THICK = 0.5 * (THICK1 + THICK2)
+              PGF(IIS) = PGF(IIS) * TEMP(IIS) * THICK
             ELSE
               PGF(IIS) = TEMP(IIS)
             ENDIF
           ENDDO
         ENDDO
+C-------SET HK FOR THEIM SOLUTION CONNECTION
+          DO N=1,NODES
+            THICK = TOP(N) - BOT(N)
+            AKN = 0.0
+            IKN = 0
+C-----------GO OVER CONNECTIONS OF NODE N AND FILL FOR UPPER SYMMETRIC PART
+            DO II = IA(N)+1,IA(N+1)-1
+              JJ = JA(II)
+              IF(JJ.LE.NODES)THEN
+                IIS = JAS(II) 
+                IF(JJ.GT.N)THEN
+                  AKN = AKN + PGF(IIS) / THICK * CL1(IIS)
+                ELSE
+                  AKN = AKN + PGF(IIS) / THICK * CL2(IIS) 
+                ENDIF
+                IKN = IKN + 1
+              ENDIF
+            ENDDO
+            IF(IKN.GT.0) THEN 
+              HK(N) = AKN / IKN
+            ENDIF
+          ENDDO
+C-----------------------------------------------------        
         DEALLOCATE(TEMP)
       ENDIF
 C
@@ -1794,7 +1820,7 @@ C     ------------------------------------------------------------------
 C
       CHARACTER*16 TEXT(1)
       DOUBLE PRECISION HD,CHIN,CHOUT,XX1,TMP,RATE,CHCH1,HDIFF,
-     *  X1,CIN,COUT
+     *  X1,CIN,COUT,ZERO
 C
       DATA TEXT(1) /'   CONSTANT HEAD'/
 C     ------------------------------------------------------------------
@@ -1836,6 +1862,7 @@ C
 C3------LOOP THROUGH EACH CELL AND WRITE FLOW FROM EACH
 C3------CONSTANT-HEAD CELL.
       IBDLBL = 0
+      ZERO = 0.0
       DO 200 N=1,NODES
 C
 C4------IF CELL IS NOT CONSTANT HEAD SKIP IT & GO ON TO NEXT CELL.
@@ -2870,8 +2897,8 @@ C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GLOBAL,      ONLY:NCOL,NROW,NLAY,ITRSS,LAYHDT,LAYHDS,LAYCBD,
      1                 NCNFBD,IBOUND,BUFF,NBOTM,DELR,DELC,IOUT,ARAD,
-     2                 NODES,IFREFM,IUNSTR,PGF,NJA,NJAS,NJAG,
-     3                 NODLAY,IA,JA,IDSYMRD,IATMP,NJATMP
+     2                 NODES,IFREFM,IUNSTR,PGF,NJA,NJAS,NJAG,CL1,
+     3                 NODLAY,IA,JA,IDSYMRD,IATMP,NJATMP,TOP,BOT,JAS
       USE GWFBCFMODULE,ONLY:IBCFCB,IWDFLG,IWETIT,IHDWET,WETFCT,HDRY,CV,
      1                      LAYCON,LAYAVG,SC1,SC2,WETDRY,
      2                      IKCFLAG,laywet,ISFAC,ITHFLG,
@@ -3030,11 +3057,44 @@ C4--------READ EFFECTIVE SATURATED K OF CONNECTION
           DO IIS=1,NJAS
             PGF(IIS) = PGF(IIS) * TEMP(IIS)
           ENDDO
+C-----------INCLUDE THICKNESS TERM          
+          DO N=1,NODES
+            THICK1 = TOP(N) - BOT(N)
+C-----------GO OVER CONNECTIONS OF NODE N AND FILL FOR UPPER SYMMETRIC PART
+            DO II = IA(N)+1,IA(N+1)-1
+              JJ = JA(II)
+              IF(JJ.GE.N.AND.JJ.LE.NODES)THEN
+                THICK2 = TOP(JJ) - BOT(JJ)
+                THICK = 0.5 * (THICK1 + THICK2)
+                IIS = JAS(II)
+                PGF(IIS) = PGF(IIS) * THICK
+              ENDIF
+            ENDDO
+          ENDDO
         ELSE
           DO IIS=1,NJAS
             PGF(IIS) = TEMP(IIS)
           ENDDO
         ENDIF
+C-------SET HK FOR THEIM SOLUTION CONNECTION
+          DO N=1,NODES
+            THICK = TOP(N) - BOT(N)
+            AKN = 0.0
+            IKN = 0
+C-----------GO OVER CONNECTIONS OF NODE N AND FILL FOR UPPER SYMMETRIC PART
+            DO II = IA(N)+1,IA(N+1)-1
+              JJ = JA(II)
+              IF(JJ.GE.N.AND.JJ.LE.NODES)THEN
+                 IIS = JAS(II)
+                AKN = AKN + PGF(IIS) / THICK * CL1(IIS)
+                IKN = IKN + 1
+              ENDIF
+            ENDDO
+            IF(IKN.GT.0) THEN
+              HK(N) = AKN / IKN
+            ENDIF
+          ENDDO
+C-----------------------------------------------------
         DEALLOCATE(TEMP)
       ENDIF
 C
@@ -3606,11 +3666,11 @@ C
       DEALLOCATE(IWDFLG)
       DEALLOCATE(IWETIT)
       DEALLOCATE(IHDWET)
-      DEALLOCATE(ISFAC)
-      DEALLOCATE(ITHFLG)
       DEALLOCATE(IHANISO)
       DEALLOCATE(CHANI)
       IF(INLPF.NE.0)THEN
+        DEALLOCATE(ITHFLG)
+        DEALLOCATE(ISFAC)
         DEALLOCATE(LAYTYP)
         DEALLOCATE(LAYVKA)
         DEALLOCATE(LAYSTRT)

@@ -396,7 +396,10 @@ C     ------------------------------------------------------------------
      3            IVC,IA,JA,JAS,ISYM,NJA,NJAG,IVSD,DELC,DELR,IPRCONN,
      4            IBOUND,MXNODLAY,ICONCV,NOCVCO,NEQS,IFREFM,IDSYMRD,
      5            IATMP,NJATMP,IAG,PGF,FAHL,NJAS,NLAY,JAFL
-      USE CLN1MODULE, ONLY: NCLNNDS
+      USE CLN1MODULE, ONLY: NCLNNDS,IA_CLN
+      USE SPARSEMODULE 
+      TYPE(SPARSEMATRIX) :: SMAT
+      INTEGER,ALLOCATABLE,DIMENSION(:) :: ROWMAXNNZ
 C
       CHARACTER*200 LINE
       CHARACTER*24 ANAME
@@ -467,14 +470,41 @@ C7A------(CONNECTIVITY IS EXPANDED WHEN OTHER PROCESS DOMAINS EXIST OR IF GNC IS
         ENDDO
 C7A1------ALSO ALLOCATE SPACE FOR ORIGINAL JA REQUIRED TO SORT C-B-C OUTPUT        
         ALLOCATE (JAFL(NJA+1))
-        JAFL = JA        
+        DO I=1,NJA
+          JAFL(I) = JA(I)
+      ENDDO
 C---------------------------------------------------------------------------------
-C7B-------IF CLN DOMAIN IS ACTIVE THEN ADD ITS NODES TO IA AND JA
+C7B-------INITIALIZE SPARSEMODULE DATA STRUCTURES FOR CREATING NEW IA AND JA
+      ALLOCATE(ROWMAXNNZ(NEQS))
+C7B1--------STORE NUMBER OF CONNECTIONS IN ROWMAXNNZ TO INITIALIZE AMAT SIZE      
+      DO N=1,NODES
+          ROWMAXNNZ(N)=IA(N+1)-IA(N)
+      ENDDO
+C7B2--------ALSO FOR CLN NODES       
+      IF(INCLN.NE.0) THEN
+        DO N=1,NCLNNDS
+          IEQ = N + NODES
+          ROWMAXNNZ(IEQ)=IA_CLN(N+1)-IA_CLN(N)
+        ENDDO
+      ENDIF 
+      CALL SMAT%INIT(NEQS, NEQS, ROWMAXNNZ)
+      DEALLOCATE(ROWMAXNNZ)
+C7B3--------ADD EXISTING GW IA/JA PATTERN TO SPARSEMODULE DATA STRUCTURE      
+      DO N=1,NEQS
+          DO JJ=IA(N),IA(N+1)-1
+              M=JA(JJ)
+              CALL SMAT%ADDCONNECTION(N,M,1)
+          ENDDO
+      ENDDO
+C7B4-----DEALLOCATE THE JA ARRAY
+      DEALLOCATE(JA)
+C--------------------------------------------------------------------      
+C7C-------IF CLN DOMAIN IS ACTIVE THEN ADD ITS NODES TO THE SPARSEMODULE DATA STRUCTURE
         IF(INCLN.NE.0) THEN
-          CALL ADDIAJA_CLN
+          CALL ADDIAJA_CLN (SMAT)
         ENDIF
-C---------------------------------------------------------------------------------
-C7C-------IF GNC DOMAIN IS ACTIVE THEN ADD ITS CONNECTIONS TO IA AND JA
+C
+C7D-------IF GNC DOMAIN IS ACTIVE THEN ADD ITS CONNECTIONS TO IA AND JA
 csp        IF(INGNC.NE.0) THEN
 csp          CALL ADDIAJA_GNC
 csp        ENDIF    
@@ -482,9 +512,19 @@ csp        IF(INGNC2.NE.0) THEN
 csp          CALL ADDIAJA_GNCT
 csp        ENDIF
         IF(INGNCn.NE.0) THEN
-          CALL ADDIAJA_GNCn
+          CALL ADDIAJA_GNCn(SMAT)
         ENDIF
-C7D-------PRINT NEW IA AND JA INFORMATION IF PRINTFV OPTION IS SET 
+C------------------------------------------------------------------------------------
+C---------------------------------------------------------------------------------
+C7E------ALLOCATE JA AND FILL THE IA AND JA ARRAYS AFTER ALL SPARSEMODULE DATA STRUCTURES ARE FILLED
+      NJA=SMAT%NNZ
+      ALLOCATE(JA(NJA))
+      CALL SMAT%FILLIAJA(IA,JA,IERR)
+C
+C7F------DESTROY THE SPARSEROW MATRIX
+      CALL SMAT%DESTROY
+C
+C7G-------PRINT NEW IA AND JA INFORMATION IF PRINTFV OPTION IS SET 
         IF(IPRCONN.NE.0)THEN
           WRITE(IOUT,54)NEQS,NJA
 54        FORMAT(1X,'NEQS = ',I10,';  NJA = ',I10,';')
@@ -496,7 +536,13 @@ C7D-------PRINT NEW IA AND JA INFORMATION IF PRINTFV OPTION IS SET
         ENDIF
       ELSE
         JAFL => JA
-      ENDIF        
+      ENDIF
+C        
+C7H-----SET GNC CONNECTION ARRAYS FROM JA STRUCTURE     
+      IF(INGNCn.NE.0) THEN
+        CALL SGNCn2DISU1MC
+      ENDIF
+C
 C---------------------------------------------------------------------------------
 C-------MAKE DIAGONALS OF JA POSITIVE  ***** SHOULD ALREADY BE POSITIVE. 
 C      DO N=1,NODES

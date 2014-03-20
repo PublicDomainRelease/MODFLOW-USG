@@ -58,6 +58,11 @@ METHOD
 
 HISTORY
 
+      MODFLOW-USG Version 1.2.00 03/21/2014 -- Added a transient IBOUND
+         option and an IA-JA input option for the CLN Process.  These and
+         other minor changes are described in release.txt.
+         
+
       MODFLOW-USG Version 1.1.00 08/23/2013 -- Added bi-conjugate 
          gradient stabilized acceleration method for the pcgu linear solver.  
          Added free format option for the STR Package.  See release.txt for

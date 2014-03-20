@@ -9,9 +9,11 @@ C     ------------------------------------------------------------------
       USE GLOBAL, ONLY: IUNIT,IOUT,NEQS,NODES,NROW,NCOL,IFREFM,IUNSTR,
      *                  INCLN
       USE GWFBASMODULE, ONLY: IHEDUN,IDDNUN,IBOUUN
-      CHARACTER*24 ANAME
+      CHARACTER*24 ANAME(3)
       CHARACTER*200 LINE
-      DATA ANAME /'   NODES PER CLN SEGMENT'/
+      DATA ANAME(1) /'   NODES PER CLN SEGMENT'/
+      DATA ANAME(2) /'                      IA'/
+      DATA ANAME(3) /'                      JA'/  
       DOUBLE PRECISION FRAD
 C     ------------------------------------------------------------------
 C
@@ -22,17 +24,48 @@ C1------IDENTIFY PACKAGE.
      1    'PROCESS, VERSION 1, 3/3/2012 INPUT READ FROM UNIT ',I4)
 C
 C2------ALLOCATE SCALAR VARIABLES AND INITIALIZE.
-      ALLOCATE(NCLN,ICLNCB,ICLNHD,ICLNDD,ICLNIB,NCLNNDS,NCLNGWC)
+      ALLOCATE(NCLN,ICLNCB,ICLNHD,ICLNDD,ICLNIB,NCLNNDS,NCLNGWC,NJA_CLN)
       ALLOCATE(NCONDUITYP) !OTHER CLN TYPES CAN BE DIMENSIONED HERE
+      ALLOCATE(ICLNTIB) !TRANSIENT IBOUND OPTION
+      ICLNTIB=0
       NCLN = 0
 C
-C3------READ MAXIMUM NUMBER OF CLN NODES AND UNIT OR FLAGS FOR CLN
-C3------DOMAIN OUTPUT OF HEAD, DRAWDOWN AND CELL-BY-CELL FLOW TERMS.
       CALL URDCOM(INCLN,IOUT,LINE)
+C
+C3A-----CHECK FOR OPTIONS KEYWORD AT TOP OF FILE
+      IPRCONN=0
+      IOPTFOUND=0
+      LLOC=1
+      CALL URWORD(LINE,LLOC,ISTART,ISTOP,1,I,R,IOUT,IN)
+      IF(LINE(ISTART:ISTOP).EQ.'OPTIONS') THEN
+        IOPTFOUND=1
+   70   CALL URWORD(LINE,LLOC,ISTART,ISTOP,1,I,R,IOUT,IN)
+        IF(LINE(ISTART:ISTOP).EQ.'TRANSIENT') THEN
+          ICLNTIB=1
+          WRITE(IOUT,71)
+   71     FORMAT(1X,'TRANSIENT IBOUND OPTION:',
+     1     ' READ TRANSIENT IBOUND RECORDS FOR EACH STRESS PERIOD.')
+        ELSEIF(LINE(ISTART:ISTOP).EQ.'PRINTIAJA') THEN
+          IPRCONN=1
+          WRITE(IOUT,72)
+   72     FORMAT(1X,'PRINT CLN IA AND JA OPTION:',
+     1     ' THE CLN IA AND JA ARRAYS WILL BE PRINTED TO LIST FILE.')
+        ELSEIF(LINE(ISTART:ISTOP).EQ.' ') THEN
+          CONTINUE
+        ELSE
+          WRITE(IOUT,79) LINE(ISTART:ISTOP)
+   79     FORMAT(1X,'UNKNOWN OPTION DETECTED: ',A)
+        ENDIF
+        IF(LLOC.LT.200) GO TO 70
+      END IF
+      IF(IOPTFOUND.GT.0) CALL URDCOM(INCLN,IOUT,LINE)
+C
+C3B------READ MAXIMUM NUMBER OF CLN NODES AND UNIT OR FLAGS FOR CLN
+C3B------DOMAIN OUTPUT OF HEAD, DRAWDOWN AND CELL-BY-CELL FLOW TERMS.
       IF(IFREFM.EQ.0) THEN
         READ(LINE,'(8I10)') NCLN,ICLNNDS,ICLNCB,ICLNHD,ICLNDD,
      1    ICLNIB,NCLNGWC,NCONDUITYP
-        LLOC=31
+        LLOC=81
       ELSE
         LLOC=1
         CALL URWORD(LINE,LLOC,ISTART,ISTOP,2,NCLN,R,IOUT,INCLN)
@@ -46,10 +79,10 @@ C3------DOMAIN OUTPUT OF HEAD, DRAWDOWN AND CELL-BY-CELL FLOW TERMS.
 CADD----ADD NUMBER OF OTHER CLN NODE TYPES HERE TO CATALOGUE THEM        
       END IF
 C---------------------------------------------------------------------------
-C3A-----REFLECT FLAGS IN OUTPUT LISTING FILE
+C3C-----REFLECT FLAGS IN OUTPUT LISTING FILE
       WRITE(IOUT,3) NCLN,ICLNNDS,NCLNGWC
-    3 FORMAT(1X,'MAXIMUM NUMBER OF CONDUITS (NCLN) =',I7
-     1  /1X,'FLAG (-VE) OR NUMBER OF CONDUIT DOMAIN NODES (+VE)',
+    3 FORMAT(1X,'FLAG (0) OR MAXIMUM NUMBER OF LINEAR NODES (NCLN) =',I7
+     1  /1X,'FLAG (-VE) OR NUMBER OF LINEAR NODES (+VE)',
      1  1X,'(ICLNNDS) =',I7
      1  /1X,'NUMBER OF LINEAR NODE TO MATRIX GRID CONNECTIONS',
      1  ' (NCLNGWC) =',I7/)
@@ -102,49 +135,87 @@ C
 C--------------------------------------------------------------------------------
 C
 C4------DIMENSION AND READ ARRAY THAT CONTAINS NUMBER OF NODES PER CLN SEGMENT
-      ALLOCATE(NNDCLN(0:NCLN))
-      K = 0
-      CALL U1DINT(NNDCLN(1),ANAME,NCLN,K,INCLN,IOUT)
-      NNDCLN(0) = 0
+      IF(NCLN.GT.0)THEN      
+        ALLOCATE(NNDCLN(0:NCLN))
+        K = 0
+        CALL U1DINT(NNDCLN(1),ANAME(1),NCLN,K,INCLN,IOUT)
+        NNDCLN(0) = 0
 C
-C5------MAKE NNDCLN ARRAY CUMULATIVE
-      DO I = 1,NCLN
-        NNDCLN(I) = NNDCLN(I) + NNDCLN(I-1)
-      ENDDO
-      NCLNCONS = NNDCLN(NCLN)
+C5--------MAKE NNDCLN ARRAY CUMULATIVE
+        DO I = 1,NCLN
+          NNDCLN(I) = NNDCLN(I) + NNDCLN(I-1)
+        ENDDO
+        NCLNCONS = NNDCLN(NCLN)
 C------------------------------------------------------------------------------
-C6------FILL CLNCON WITH CONNECTIVITY OF ADJACENT CLN NODES
-      IF(ICLNNDS.LT.0)THEN
+C6--------FILL CLNCON WITH CONNECTIVITY OF ADJACENT CLN NODES
+        IF(ICLNNDS.LT.0)THEN
 C6A-------FILL CLN CONNECTIONS SEQUENTIALLY WITH GLOBAL NODE NUMBERS
-        NCLNNDS = NNDCLN(NCLN)
-        ALLOCATE(CLNCON(NCLNNDS))
-        DO I=1,NCLNNDS
-          CLNCON(I) = NODES + I
-        ENDDO
-      ELSE
-C6B-----SET NUMBER OF CLN NODES AND READ CONNECTION ARRAY FOR EACH CLN SEGMENT
+          NCLNNDS = NNDCLN(NCLN)
+          ALLOCATE(CLNCON(NCLNNDS))
+          DO I=1,NCLNNDS
+            CLNCON(I) =  I ! LOCAL NUMBER NOW 
+          ENDDO
+        ELSE
+C6B-------SET NUMBER OF CLN NODES AND READ CONNECTION ARRAY FOR EACH CLN SEGMENT
+          NCLNNDS = ICLNNDS
+          ALLOCATE(CLNCON(NCLNCONS))
+          DO I=1,NCLN
+            IF(IFREFM.EQ.0) THEN
+              READ(INCLN,'(200I10)') 
+     1        (CLNCON(J),J=NNDCLN(I-1)+1,NNDCLN(I))
+            ELSE
+              READ(INCLN,*) (CLNCON(J),J=NNDCLN(I-1)+1,NNDCLN(I))
+            ENDIF
+          ENDDO
+CSPC6C-------CONVERT CLN-NODE NUMBER TO GLOBAL NODE NUMBER
+CSP        DO I=1,NCLNCONS
+CSP          CLNCON(I) = NODES + CLNCON(I)
+CSP        ENDDO
+        ENDIF
+C6D--------CONVERT TO IA_CLN AND JA_CLN
+        ALLOCATE(IA_CLN(NCLNNDS+1))
+        CALL FILLIAJA_CLN
+C6E---------DEALLOCATE UNWANTED ARRAYS        
+        DEALLOCATE (NNDCLN) ! NNDCLN NEEDED FOR WRITING BUDGET TO ASCII FILE? 
+        DEALLOCATE (CLNCON)
+      ELSE 
+C----------------------------------------------------------------------
+C7------FOR INPUT OF IA AND JAC OF CLN DOMAIN (NCLN = 0), READ DIRECTLY
         NCLNNDS = ICLNNDS
-        ALLOCATE(CLNCON(NCLNCONS))
-        DO I=1,NCLN
-          IF(IFREFM.EQ.0) THEN
-            READ(INCLN,'(200I10)') (CLNCON(J),J=NNDCLN(I-1)+1,NNDCLN(I))
-          ELSE
-            READ(INCLN,*) (CLNCON(J),J=NNDCLN(I-1)+1,NNDCLN(I))
-          ENDIF
+        ALLOCATE(IA_CLN(NCLNNDS+1))
+C7A-------READ NJA_CLN        
+        IF(IFREFM.EQ.0) THEN
+          READ(INCLN,'(I10)') NJA_CLN
+        ELSE
+          READ(INCLN,*) NJA_CLN
+        ENDIF
+C7B-------READ CONNECTIONS PER NODE AND CONNECTIVITY AND FILL IA_CLN AND JA_CLN ARRAYS
+        K = 0
+        CALL U1DINT(IA_CLN,ANAME(2),NCLNNDS,K,INCLN,IOUT)
+        ALLOCATE(JA_CLN(NJA_CLN))
+        CALL U1DINT(JA_CLN,ANAME(3),NJA_CLN,K,INCLN,IOUT)
+C7C--------ENSURE POSITIVE TERM FOR DIAGONAL OF JA_CLN
+        DO IJA = 1,NJA_CLN
+          IF(JA_CLN(IJA).LT.0) JA_CLN(IJA) = -JA_CLN(IJA)
         ENDDO
-C6C-------CONVERT CLN-NODE NUMBER TO GLOBAL NODE NUMBER
-        DO I=1,NCLNCONS
-          CLNCON(I) = NODES + CLNCON(I)
+C7D--------MAKE IA_CLN CUMULATIVE FROM CONNECTION-PER-NODE
+        DO II=2,NCLNNDS+1
+          IA_CLN(II) = IA_CLN(II) + IA_CLN(II-1)
         ENDDO
+C---------IA_CLN(N+1) IS CUMULATIVE_IA_CLN(N) + 1
+        DO II=NCLNNDS+1,2,-1
+          IA_CLN(II) = IA_CLN(II-1) + 1
+        ENDDO
+        IA_CLN(1) = 1
       ENDIF
 C----------------------------------------------------------------------
-C7------ALLOCATE SPACE FOR CLN PROPERTY ARRAYS
+C8------ALLOCATE SPACE FOR CLN PROPERTY ARRAYS
       ALLOCATE(ACLNNDS(NCLNNDS,6))
       ALLOCATE(IFLINCLN(NCLNNDS))      
       ALLOCATE(ICCWADICLN(NCLNNDS))
       ALLOCATE(ICGWADICLN(NCLNGWC))
 C
-C8------PREPARE TO REFLECT INPUT PROPERTIES INTO LISTING FILE
+C9------PREPARE TO REFLECT INPUT PROPERTIES INTO LISTING FILE
       WRITE(IOUT,21)
 21    FORMAT(/20X,' CONNECTED LINE NETWORK INFORMATION'/
      1  20X,40('-')/5X,'CLN-NODE NO.',1X,'CLNTYP',1X,'ORIENTATION',2X,
@@ -152,7 +223,7 @@ C8------PREPARE TO REFLECT INPUT PROPERTIES INTO LISTING FILE
      1  'ICCWADI'/5X,11('-'),2X,6('-'),1X,11('-'),1X,11('-'),4X,13('-'),
      1   4X,11('-'),8X,6('-'),4X,7('-'))
 C
-C9-------READ BASIC PROPERTIES FOR ALL CLN NODES AND FILL ARRAYS
+C10-------READ BASIC PROPERTIES FOR ALL CLN NODES AND FILL ARRAYS
       DO I = 1,NCLNNDS
         CALL URDCOM(INCLN,IOUT,LINE)
         IF(IFREFM.EQ.0) THEN
@@ -168,9 +239,10 @@ C9-------READ BASIC PROPERTIES FOR ALL CLN NODES AND FILL ARRAYS
           CALL URWORD(LINE,LLOC,ISTART,ISTOP,3,I,FELEV,IOUT,INCLN)
           CALL URWORD(LINE,LLOC,ISTART,ISTOP,3,I,FANGLE,IOUT,INCLN)
           CALL URWORD(LINE,LLOC,ISTART,ISTOP,2,IFLIN,R,IOUT,INCLN)
+          IF(IFLIN.EQ.0) IFLIN = -1
           CALL URWORD(LINE,LLOC,ISTART,ISTOP,2,ICCWADI,R,IOUT,INCLN)
         END IF
-C9A--------FOR ANGLED PIPE, IF DEPTH OF FLOW IS LESS THAN DIAMETER MAKE HORIZONTAL
+C11A--------FOR ANGLED PIPE, IF DEPTH OF FLOW IS LESS THAN DIAMETER MAKE HORIZONTAL
         IF(IFDIR.EQ.2)THEN
           FDPTH = FLENG * SIN(FANGLE)
           IC=IFTYP
@@ -179,7 +251,7 @@ C9A--------FOR ANGLED PIPE, IF DEPTH OF FLOW IS LESS THAN DIAMETER MAKE HORIZONT
         ENDIF
         WRITE(IOUT,22)IFNO,IFTYP,IFDIR,FLENG,FELEV,FANGLE,IFLIN,ICCWADI
 22      FORMAT(5X,I10,1X,I6,1X,I10,3(1X,E15.6),1X,I10,1X,I10)
-C9B--------FILL PROPERTY ARRAYS WITH READ AND PREPARE INFORMATION
+C11B--------FILL PROPERTY ARRAYS WITH READ AND PREPARE INFORMATION
         ACLNNDS(I,1) = IFNO + NODES ! GLOBAL NODE NUMBER FOR CLN-CELL 
         ACLNNDS(I,2) = IFTYP
         ACLNNDS(I,3) = IFDIR
@@ -190,33 +262,94 @@ C9B--------FILL PROPERTY ARRAYS WITH READ AND PREPARE INFORMATION
         ICCWADICLN(I) = ICCWADI
       ENDDO
 C----------------------------------------------------------------------------------------
-C10------ALLOCATE SPACE FOR CLN TO GW PROPERTY ARRAYS
+C12------ALLOCATE SPACE FOR CLN TO GW PROPERTY ARRAYS
       ALLOCATE(ACLNGWC(NCLNGWC,6))
 C----------------------------------------------------------------------------------------
-C11------READ CONNECTING SUBSURFACE NODE AND ASSOCIATED PARAMETERS
+C13------READ CONNECTING SUBSURFACE NODE AND ASSOCIATED PARAMETERS
       IF(IUNSTR.EQ.0)THEN
 C
-C11A-----FOR STRUCTURED GRID READ SUBSURFACE NODE IN IJK FORMATS
-C11A-----AND OTHER CLN SEGMENT PROPERTY INFORMATION
+C14A-----FOR STRUCTURED GRID READ SUBSURFACE NODE IN IJK FORMATS
+C14A-----AND OTHER CLN SEGMENT PROPERTY INFORMATION
         CALL SCLN2DIS1SR
       ELSE
 C
-C11B-----FOR UNSTRUCTURED GRID READ SUBSURFACE NODE NUMBER OF
-C11B-----CONNECTION AND OTHER CLN SEGMENT PROPERTY INFORMATION
+C14B-----FOR UNSTRUCTURED GRID READ SUBSURFACE NODE NUMBER OF
+C14B-----CONNECTION AND OTHER CLN SEGMENT PROPERTY INFORMATION
         CALL SCLN2DIS1UR
       ENDIF
 C----------------------------------------------------------------------------------------
-C12------ALLOCATE SPACE AND FILL PROPERTIES FOR ALL CONDUIT TYPE CLNs
+C15------ALLOCATE SPACE AND FILL PROPERTIES FOR ALL CONDUIT TYPE CLNs
       IF(NCONDUITYP.GT.0)THEN
         CALL SCLN2COND1RP
       ENDIF
+C
+C16------IF IPRCONN THEN WRITE CLN CONNECTIVITY TO THE OUTPUT FILE
+      IF(IPRCONN.NE.0)THEN
+        WRITE(IOUT,'(/,A)')' IA_CLN IS BELOW, 40I10'
+        WRITE(IOUT,55)(IA_CLN(I),I=1,NCLNNDS+1)
+        WRITE(IOUT,*)'NJA_CLN = ',NJA_CLN
+        WRITE(IOUT,*)'JA_CLN IS BELOW, 40I10'
+        WRITE(IOUT,55)(JA_CLN(J),J=1,NJA_CLN)
+55      FORMAT(40I10)
+      ENDIF            
 C----------------------------------------------------------------------------------------
-C13------ALLOCATE SPACE AND FILL PROPERTIES FOR OTHER CLN TYPES HERE
+C17------ALLOCATE SPACE AND FILL PROPERTIES FOR OTHER CLN TYPES HERE
 CADD------ADD OTHER CLN TYPE READ AND PREPARE INFORMATION HERE
+C----------------------------------------------------------------------------------------
+C18-----RETURN
+      RETURN
+      END
+C---------------------------------------------------------------------------------------      
+      SUBROUTINE FILLIAJA_CLN
+C     ******************************************************************
+C      FILL IA AND JA OF CLN DOMAIN IF CLN INPUT IS FOR LINEAR SEGMENTS
+C     ******************************************************************
+C
+C        SPECIFICATIONS:
+C     ------------------------------------------------------------------
+      USE CLN1MODULE
+      USE GLOBAL, ONLY: IUNIT,IOUT,NEQS,NODES,NROW,NCOL,IFREFM,IUNSTR,
+     *                  INCLN,JA
+      USE SPARSEMODULE
+      TYPE(SPARSEMATRIX) :: SMAT
+      INTEGER,ALLOCATABLE,DIMENSION(:) :: ROWMAXNNZ
+C------------------------------------------------------------------------
+C1--------FILL NUMBER OF CONNECTIONS IN ROWMAXNNZ TO INITIALIZE SMAT SIZE
+      ALLOCATE(ROWMAXNNZ(NCLNNDS))
+      DO N=1,NCLNNDS
+          ROWMAXNNZ(N)=3 ! START WITH 3
+      ENDDO
+      CALL SMAT%INIT(NCLNNDS, NCLNNDS, ROWMAXNNZ)
+      DEALLOCATE(ROWMAXNNZ)
+C--------------------------------------------------------------------
+C2--------ADD THE CLN CONNECTIONS TO SMAT (OF TYPE SPARSEMATRIX) 
+C2A-------FIRST ADD SELF-CONNECTION
+      DO ICLN = 1,NCLNNDS
+        CALL SMAT%ADDCONNECTION(ICLN,ICLN,1)  
+      ENDDO
+C2B------FOR CLN-CLN CONNECTIONS      
+      DO IFR = 1,NCLN
+        NN = NNDCLN(IFR)
+        NB = NNDCLN(IFR-1)+1
+        DO N = NB,NN-1
+          ND1 = CLNCON(N)
+          ND2 = CLNCON(N+1)
+          CALL SMAT%ADDCONNECTION(ND1,ND2,0)  ! INODUP=0 AS NO NEED TO CHECK FOR DUPLICATES 
+          CALL SMAT%ADDCONNECTION(ND2,ND1,0)  ! INODUP=0 AS NO NEED TO CHECK FOR DUPLICATES
+        ENDDO
+      ENDDO
+C--------------------------------------------------------------------
+C3------ALLOCATE JA_CLN AND FILL THE IA_CLN AND JA_CLN ARRAYS
+      NJA_CLN=SMAT%NNZ
+      ALLOCATE(JA_CLN(NJA_CLN))
+      CALL SMAT%FILLIAJA(IA_CLN,JA_CLN,IERR)
+C--------------------------------------------------------------------
+C4------DESTROY THE SPARSEMATRIX SMAT
+      CALL SMAT%DESTROY
 C----------------------------------------------------------------------------------------
 C14-----RETURN
       RETURN
-      END
+      END            
 C ---------------------------------------------------------------------
       SUBROUTINE SCLN2DIS1SR
 C     ******************************************************************
@@ -398,76 +531,240 @@ C6------RETURN
       RETURN
       END
 C
-C ---------------------------------------------------------------------
-      SUBROUTINE SFILLIA_CLN
+      SUBROUTINE CLN1RP(IN)
 C     ******************************************************************
-C     INCLUDE CLN CONNECTIVITIES IN ROW INDICATOR MATRIX IA
+C     UPDATE IBOUND IF TRANSIENT IBOUND OPTION SPECIFIED
 C     ******************************************************************
 C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
-      USE CLN1MODULE, ONLY: NCLNGWC,ACLNGWC,NNDCLN,NCLN,CLNCON,ACLNNDS
-      USE GLOBAL, ONLY: IA
+      USE CLN1MODULE, ONLY: ICLNTIB,NCLNNDS
+      USE GLOBAL,      ONLY:IOUT,IFREFM,IUNSTR,IBOUND,HNEW,IA,JA,NODES
+      USE GWFBASMODULE, ONLY: HNOFLO
+      IMPLICIT NONE
+      INTEGER, DIMENSION(:),ALLOCATABLE  ::ITEMP
+      CHARACTER*24 ANAME
+      CHARACTER(LEN=200) line
+      INTEGER,INTENT(IN) :: IN
+      INTEGER :: LLOC,NIB0,NIB1,NIBM1,ISTART,ISTOP,I,ICELL,IB,IAVHEAD,
+     1           IHEAD,IBOUNDKP,ISUM,JJ,NODCLN
+      REAL :: R,HEAD
+      DATA ANAME /'     ZEROED IBOUND CELLS'/
 C     ------------------------------------------------------------------
 C
-C1------ADD CONNECTION OF CLN NODE WITH MATRIX
-      DO IFN = 1,NCLNGWC
-        I1 = ACLNGWC(IFN,1)
-        ND1 = ACLNNDS(I1,1)
-        IA(ND1) = IA(ND1) + 1
-        ND2 = ACLNGWC(IFN,2)
-        IA(ND2) = IA(ND2) + 1
-      ENDDO
-C2------ADD CONNECTION WITH NEXT CONDUIT-NODE OF A CONDUIT SEGMENT
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NNM1 = NNDCLN(IFR-1)
-        DO INOD = NNM1+1,NN-1
-          ND1 = CLNCON(INOD)
-          ND2 = CLNCON(INOD+1)
-          IA(ND1) = IA(ND1) + 1
-          IA(ND2) = IA(ND2) + 1
+C1-----RETURN IF ITIB IS 0 OR FIRST STRESS PERIOD
+      IF(ICLNTIB.EQ.0) RETURN
+C
+C3------READ FLAGS      
+      READ(IN,'(A)',END=100) LINE
+      IF(IFREFM.EQ.0)THEN
+        READ(LINE,'(3I10)') NIB0,NIB1,NIBM1
+      ELSE
+        LLOC = 1
+        CALL URWORD(line, lloc, istart, istop, 2, NIB0, r, Iout, In)
+        CALL URWORD(line, lloc, istart, istop, 2, NIB1, r, Iout, In)
+        CALL URWORD(line, lloc, istart, istop, 2, NIBM1, r, Iout, In)
+      END IF
+C------------------------------------------------------------------------
+C4------CHECK IF IBOUND IS TO BE ZEROED OUT.
+      IF(NIB0.LE.0) THEN
+C
+C4A-----NIB0=<0, SO NO CELLS INACTIVATED.
+        WRITE(IOUT,3)
+    3  FORMAT(1X,/1X,'NO CLN CELLS INACTIVATED FROM LAST STRESS PERIOD')
+      ELSE
+C
+C4B-----NIB0>0, SO READ LIST OF INACTIVATED CELLS AND SET IBOUND TO ZERO
+        ALLOCATE (ITEMP(NIB0))
+        CALL U1DINT(ITEMP,ANAME,NIB0,0,IN,IOUT)
+        DO I=1,NIB0
+          ICELL = ITEMP(I)
+          IF(ICELL.LT.1 .OR. ICELL.GT.NCLNNDS) THEN
+            WRITE(IOUT,*) 'ERROR IN TRANSIENT CLN NODE SPECIFICATION.'
+            WRITE(IOUT,*) 'CLN NODE NUMBER NOT BETWEEN 1 AND NCLNNDS.'
+            WRITE(IOUT,*) 'CLN NODE NUMBER: ', ICELL
+            WRITE(IOUT,*) 'NCLNNDS: ', NCLNNDS
+            CALL USTOP('')
+          ENDIF
+          ICELL = ICELL + NODES
+          IBOUND(ICELL) = 0 
+          HNEW(ICELL) = HNOFLO  
         ENDDO
-      ENDDO
+        DEALLOCATE(ITEMP)
+      ENDIF
+C------------------------------------------------------------------------
+C5------CHECK IF IBOUND IS TO BE ACTIVATED.
+      IF(NIB1.LE.0) THEN
 C
-C3------RETURN
-      RETURN
-      END
+C5A-----NIB1=<0, SO NO CELLS ACTIVATED.
+        WRITE(IOUT,4)
+4       FORMAT(1X,/1X,'NO CLN CELLS ACTIVATED FROM LAST STRESS PERIOD')
+      ELSE
 C
-C -----------------------------------------------------------------------
-      SUBROUTINE FILLJA_CLN
-C     ******************************************************************
-C     FILL JA ARRAY FOR CONDUIT DOMAIN FLOW NODES.
-C     ******************************************************************
-      USE GLOBAL, ONLY:JA,IA,NODES,NEQS
-      USE CLN1MODULE, ONLY:NCLN,NCLNGWC,ACLNGWC,NNDCLN,CLNCON,NCLNNDS,
-     1    ACLNNDS
-C-----------------------------------------------------------------------
+C5B-----NIB1>0, SO READ LIST OF ACTIVATED CELLS AND SET IBOUND TO 1
+        DO IB=1,NIB1
+C5C-------READ CELL NUMBER  
+          CALL URDCOM(In, Iout, line)
+          LLOC = 1
+          IF(IFREFM.EQ.0)THEN
+            READ(LINE,'(I10)') ICELL
+            LLOC=11
+          ELSE
+            CALL URWORD(line, lloc, istart, istop, 2, ICELL, r,Iout, In)
+          END IF              
 C
-C1------DIAGONAL IN FIRST LOCATION
-      DO I=NODES+1,NODES+NCLNNDS
-        JA(IA(I)) = I
-      ENDDO
-C2-------CONNECTION WITH MATRIX
-      DO IFN = 1,NCLNGWC
-        I1 = ACLNGWC(IFN,1)
-        ND1 = ACLNNDS(I1,1)
-        ND2 = ACLNGWC(IFN,2)
-        CALL FINDJA(ND1,ND2)
-        CALL FINDJA(ND2,ND1)
-      ENDDO
-C3-------CONNECTION WITH NEXT CONDUIT-NODE OF A CONDUIT SETMENT
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NB = NNDCLN(IFR-1)+1
-        DO N = NB,NN-1
-          ND1 = CLNCON(N)
-          ND2 = CLNCON(N+1)
-          CALL FINDJA(ND1,ND2)
-          CALL FINDJA(ND2,ND1)
+C5CA----CHECK FOR VALID CELL NUMBER THEN CONVERT TO GLOBAL NUMBER
+          IF(ICELL.LT.1 .OR. ICELL.GT.NCLNNDS) THEN
+            WRITE(IOUT,*) 'ERROR IN TRANSIENT CLN NODE SPECIFICATION.'
+            WRITE(IOUT,*) 'CLN NODE NUMBER NOT BETWEEN 1 AND NCLNNDS.'
+            WRITE(IOUT,*) 'CLN NODE NUMBER: ', ICELL
+            WRITE(IOUT,*) 'NCLNNDS: ', NCLNNDS
+            CALL USTOP('')
+          ENDIF
+          NODCLN = ICELL
+          ICELL = ICELL + NODES
+C
+C5D--------GET OPTIONS 
+          IAVHEAD=0
+          IHEAD = 0
+          CALL URWORD(LINE,LLOC,ISTART,ISTOP,1,I,R,IOUT,IN)
+          IF(LINE(ISTART:ISTOP).EQ.'HEAD') THEN
+C5D1---------READ KEYWORD OPTION FOR HEAD TO BE READ.   
+            IHEAD = 1
+            CALL URWORD(LINE,LLOC,ISTART,ISTOP,3,I,HEAD,IOUT,IN)
+          ELSEIF(LINE(ISTART:ISTOP).EQ.'AVHEAD') THEN
+C5D2----------READ KEYWORD OPTION FOR AVERAGE HEAD TO BE READ.          
+             IAVHEAD=1
+          ENDIF
+C5E-----------SET IBOUND AND HEADS
+          IBOUNDKP = IBOUND(ICELL)
+          IBOUND(ICELL) = 1
+          IF(IHEAD.EQ.1)THEN
+C5E1--------HEAD IS SET TO GIVEN VALUE              
+            HNEW(ICELL) = HEAD  
+          ELSEIF(IAVHEAD.EQ.1)THEN
+C5E2--------HEAD IS SET TO AVERAGE OF CONNECTING ACTIVE CELLS              
+            HEAD = 0.0
+            ISUM = 0
+            DO I=IA(ICELL)+1,IA(ICELL+1)-1
+              JJ = JA(I)
+              IF(IBOUND(JJ).NE.0) THEN
+                HEAD = HEAD + HNEW(JJ)  
+                ISUM = ISUM + 1
+              ENDIF
+            ENDDO
+            IF(ISUM.GT.0) THEN
+              HEAD = HEAD / ISUM
+            ELSE
+              WRITE(IOUT,*) 'ERROR ACTIVATING CLN CELL: ', NODCLN
+              WRITE(IOUT,*) 'CANNOT CALCULATE AN AVERAGE STARTING HEAD.'
+              WRITE(IOUT,*) 'BECAUSE NO CONNECTED CELLS ARE ACTIVE.'
+              WRITE(IOUT,*) 'STOPPING...'
+              CALL USTOP('')              
+            ENDIF
+            HNEW(ICELL) = HEAD
+          ELSE
+C5E3--------CHECK TO SEE IF NODE WAS PREVIOUSLY INACTIVE
+            IF(IBOUNDKP.EQ.0)THEN
+              WRITE(IOUT,11)ICELL
+11            FORMAT(1X,'*** NEED TO SET HEAD IF INACTIVE CELL IS MADE'
+     1        1X,'ACTIVE FOR CELL ',I9,', STOPPING ***')
+              STOP
+            ENDIF  
+          ENDIF
         ENDDO
-      ENDDO
-C4-----RETURN
+      ENDIF      
+C------------------------------------------------------------------------
+C6------CHECK IF IBOUND IS TO BE MADE MINUS ONE (PRESCRIBED HEAD).
+      IF(NIBM1.LE.0) THEN
+C
+C5A-----NIBM1=<0, SO NO CELLS MADE PRESCRIBED HEAD.
+        WRITE(IOUT,5)
+5     FORMAT(/1X,'NO CLN CELLS PRESCRIBED HEAD FROM LAST STRESS PERIOD')
+      ELSE
+C
+C5B-----NIBM1>0, SO READ LIST OF PRESCRIBED HEAD CELLS AND SET IBOUND TO -1
+        DO IB=1,NIBM1
+C5C-------READ CELL NUMBER  
+          CALL URDCOM(In, Iout, line)
+          LLOC = 1
+          IF(IFREFM.EQ.0)THEN
+            READ(LINE,'(I10)') ICELL
+            LLOC=11
+          ELSE
+            CALL URWORD(line, lloc, istart, istop, 2, ICELL, r,Iout, In)
+          END IF              
+C
+C5CA----CHECK FOR VALID CELL NUMBER THEN CONVERT TO GLOBAL NUMBER
+          IF(ICELL.LT.1 .OR. ICELL.GT.NCLNNDS) THEN
+            WRITE(IOUT,*) 'ERROR IN TRANSIENT CLN NODE SPECIFICATION.'
+            WRITE(IOUT,*) 'CLN NODE NUMBER NOT BETWEEN 1 AND NCLNNDS.'
+            WRITE(IOUT,*) 'CLN NODE NUMBER: ', ICELL
+            WRITE(IOUT,*) 'NCLNNDS: ', NCLNNDS
+            CALL USTOP('')
+          ENDIF
+          NODCLN = ICELL
+          ICELL = ICELL + NODES
+C
+C5D--------GET OPTIONS 
+          IAVHEAD=0
+          IHEAD = 0
+          CALL URWORD(LINE,LLOC,ISTART,ISTOP,1,I,R,IOUT,IN)
+          IF(LINE(ISTART:ISTOP).EQ.'HEAD') THEN
+C5D1---------READ KEYWORD OPTION FOR HEAD TO BE READ.   
+            IHEAD = 1
+            CALL URWORD(LINE,LLOC,ISTART,ISTOP,3,I,HEAD,IOUT,IN)
+          ELSEIF(LINE(ISTART:ISTOP).EQ.'AVHEAD') THEN
+C5D2----------READ KEYWORD OPTION FOR AVERAGE HEAD TO BE READ.          
+             IAVHEAD=1
+          ENDIF
+C5E-----------SET IBOUND AND HEADS
+          IBOUNDKP = IBOUND(ICELL)
+          IBOUND(ICELL) = -1
+          IF(IHEAD.EQ.1)THEN
+C5E1--------HEAD IS SET TO GIVEN VALUE              
+            HNEW(ICELL) = HEAD  
+          ELSEIF(IAVHEAD.EQ.1)THEN
+C5E2--------HEAD IS SET TO AVERAGE OF CONNECTING ACTIVE CELLS              
+            HEAD = 0.0
+            ISUM = 0
+            DO I=IA(ICELL)+1,IA(ICELL+1)-1
+              JJ=JA(I)
+              IF(IBOUND(JJ).NE.0) THEN
+                HEAD = HEAD + HNEW(JJ)  
+                ISUM = ISUM + 1
+              ENDIF
+            ENDDO
+            IF(ISUM.GT.0) THEN
+              HEAD = HEAD / ISUM
+            ELSE
+              WRITE(IOUT,*) 'ERROR CONVERTING CLN TO CONSTANT: ', NODCLN
+              WRITE(IOUT,*) 'CANNOT CALCULATE AN AVERAGE STARTING HEAD.'
+              WRITE(IOUT,*) 'BECAUSE NO CONNECTED CELLS ARE ACTIVE.'
+              WRITE(IOUT,*) 'STOPPING...'
+              CALL USTOP('')              
+            ENDIF
+            HNEW(ICELL) = HEAD
+          ELSE
+C5E3--------CHECK TO SEE IF NODE WAS PREVIOUSLY INACTIVE
+            IF(IBOUNDKP.EQ.0)THEN
+              WRITE(IOUT,12)ICELL
+12            FORMAT(1X,'*** NEED TO SET HEAD IF INACTIVE CELL IS MADE'
+     1        1X,'PRESCRIBED HEAD FOR CELL ',I9,', STOPPING ***')
+              STOP
+            ENDIF  
+          ENDIF
+        ENDDO
+      ENDIF
+      GOTO 200            
+C
+C6-----ERROR READING RECORD
+  100 WRITE(IOUT,*) 'ERROR READING TRANSIENT IBOUND RECORD FOR CLN.'
+      WRITE(IOUT,*) 'STOPPING...'
+      CALL USTOP('')
+  200 CONTINUE
+C
+C6------RETURN
       RETURN
       END
 C -----------------------------------------------------------------------
@@ -480,7 +777,7 @@ C     ******************************************************************
       USE GLOBAL, ONLY:NODES,NJA,IA,PGF,FAHL,TOP,BOT,CL1,CL2,NODES,NLAY,
      1            NODLAY,IBOUND,JA,JAS,IVC,ISYM,AREA,IDEALLOC_HY
       USE CLN1MODULE, ONLY: ACLNNDS,NCLNNDS,NNDCLN,ACLNGWC,NCLNGWC,
-     1                  NCLN,CLNCON
+     1                  ACLNCOND,NCLN,CLNCON,IA_CLN,JA_CLN
       USE GWFBCFMODULE,ONLY:HK,CV,LAYCON,LAYAVG,IKVFLAG
       DOUBLE PRECISION FK,AREAF,EL,RADFSQ,CWCn,RO,ROD,CWND,DEX,DEXN,DEZ,
      1  AREAF1,AREAF2,FK1,FK2,FPER,FRAD,FANISO,EL1,EL2,AKVAL
@@ -489,16 +786,14 @@ C-------------------------------------------------------------------------------
 C1-----CONNECT CLN NODES TO EACH OTHER
 C--------------------------------------------------------------------------------------
       PI = 3.1415926
-C1A-----loop over all CLN segments
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NB = NNDCLN(IFR-1)+1
-        DO N = NB,NN-1
-C1B---------for all nodes of a CLN segment connect with next CLN-node
-          ND1 = CLNCON(N)
-          ND2 = CLNCON(N+1)
-          NC1 = ND1 - NODES
-          NC2 = ND2 - NODES
+C1A---------loop over all CLN nodes
+      DO NC1 = 1,NCLNNDS
+C2----------loop over all connections of node NC1
+        DO II_CLN = IA_CLN(NC1)+1,IA_CLN(NC1+1)-1
+          NC2 = JA_CLN(II_CLN)
+          IF(NC2.GT.NC1) CYCLE
+          ND1 = ACLNNDS(NC1,1)   !  NC1 + NODES
+          ND2 = ACLNNDS(NC2,1)   !  NC2 + NODES
           IC1 = ACLNNDS(NC1,2)     !CLN TYPE FOR NODE 1
           IC2 = ACLNNDS(NC2,2)     !CLN TYPE FOR NODE 2
 C1C---------FIND LOWER ROW NUMBER TO FILL UPPER DIAGONAL OF PGF
@@ -634,7 +929,7 @@ C7------RETURN
       RETURN
       END
 C--------------------------------------------------------------------------------------
-      SUBROUTINE ADDIAJA_CLN
+      SUBROUTINE ADDIAJA_CLN (SMAT)
 C     ******************************************************************
 C     ADD IA AND JA OF CLN NODES TO THE SUBSURFACE IA AND JA ARRAYS
 C     ******************************************************************
@@ -643,61 +938,28 @@ C      SPECIFICATIONS:
 C     ------------------------------------------------------------------
 C
       USE GLOBAL,     ONLY:NODES,NEQS,NJA,IA,JA
-      INTEGER, SAVE,    DIMENSION(:),ALLOCATABLE  ::IAT
-      INTEGER, SAVE,    DIMENSION(:),ALLOCATABLE  ::JAT
+      USE CLN1MODULE, ONLY:NCLNNDS,IA_CLN,JA_CLN,ACLNGWC,ACLNNDS,NCLNGWC
+      USE SPARSEMODULE
+      TYPE(SPARSEMATRIX), INTENT(INOUT) :: SMAT
 C
 C     ------------------------------------------------------------------
-C
-C1--------ALLOCATE AND FILL TEMPORARY IA AND JA ARRAYS FOR SUBSURFACE DOMAIN
-      ALLOCATE(IAT(NODES+1))
-      ALLOCATE(JAT(NJA))
-      DO N=1,NODES+1
-        IAT(N) = IA(N)
+C1--------ADD EXISTING IA_CLN AND JA_CLN PATTERN TO SMAT USING GLOBAL NODE NUMBERS
+      DO NCL=1,NCLNNDS
+        N = NCL + NODES
+        DO JJ=IA_CLN(NCL),IA_CLN(NCL+1)-1
+           MCL=JA_CLN(JJ)
+           M = MCL + NODES
+           CALL SMAT%ADDCONNECTION(N,M,1)
+        ENDDO
       ENDDO
-      DO IJA=1,NJA
-        JAT(IJA) = JA(IJA)
+C2--------ADD GROUNDWATER CONNECTION TO CLN NODES TO THE SPARSEMODULE DATA STRUCTURE
+      DO IFN = 1,NCLNGWC
+        I1 = ACLNGWC(IFN,1)
+        ND1 = ACLNNDS(I1,1)
+        ND2 = ACLNGWC(IFN,2)
+        CALL SMAT%ADDCONNECTION(ND1,ND2,0)  !INODUP=0 AS NO DUPLICATES ARE EXPECTED
+        CALL SMAT%ADDCONNECTION(ND2,ND1,0)  !INODUP=0 AS NO DUPLICATES ARE EXPECTED
       ENDDO
-      DEALLOCATE(JA)
-C
-C2-------CONVERT IA TO INDICATE CONNECTIONS PER ROW OF MATRIX
-        DO N=1,NODES
-          IA(N) = IA(N+1) - IA(N)
-        ENDDO
-        IA(NODES+1) = 0
-C3-------ADD CLN NODES TO IA
-        CALL SFILLIA_CLN
-C4-------ADJUST DIAGONAL FOR CLN NODES
-        DO N = NODES+1,NEQS
-          IA(N) = IA(N) + 1
-        ENDDO
-C
-C5-------RE-COMPUTE CUMULATIVE OF CONNECTIONS PER ROW IN IA
-        DO II=2,NEQS+1
-          IA(II) = IA(II) + IA(II-1)
-        ENDDO
-C---------IA(N+1) IS CUMULATIVE_IA(N) + 1
-        DO II=NEQS+1,2,-1
-          IA(II) = IA(II-1) + 1
-        ENDDO
-        IA(1) = 1
-C6---------GET NEW NJA AND ALLOCATE NEW JA ACCORDINGLY
-        NJA = IA(NEQS+1) - 1
-        ALLOCATE(JA(NJA))
-        JA = 0
-C7--------FILL SUBSURFACE BLOCK TERMS INTO JA ARRAY AS PER NEW IA
-        DO N=1,NODES
-          IJA = IA(N)
-          DO IT = IAT(N),IAT(N+1)-1
-            JA(IJA) = JAT(IT)
-            IJA = IJA + 1
-          ENDDO
-        ENDDO
-C
-C8--------FILL JA TERMS FOR CLN DOMAIN
-        CALL FILLJA_CLN
-C9------DEALLOCATE TEMPORATY ARRAYS
-      DEALLOCATE(IAT,JAT)
-
 C10------RETURN
       RETURN
       END
@@ -738,7 +1000,8 @@ C     ------------------------------------------------------------------
       USE GLOBAL, ONLY:NODES,NLAY,IBOUND,HNEW,BUFF,BOT,TOP,ISYM,IOUT,
      1    NODLAY,AMAT,RHS,IA,JA,JAS,PGF
       USE CLN1MODULE, ONLY:  NCLN,NNDCLN,NCLNNDS,ACLNNDS,CLNCON,
-     1    ACLNGWC,NCLNGWC,IFLINCLN,HWADICC,HWADICG,ICCWADICLN,ICGWADICLN
+     1   ACLNGWC,NCLNGWC,IFLINCLN,HWADICC,HWADICG,ICCWADICLN,ICGWADICLN,
+     2   IA_CLN,JA_CLN
       USE GWFBCFMODULE,ONLY:IWDFLG,WETFCT,IHDWET,IWETIT,LAYCON,HDRY,
      1                      HK,WETDRY,LAYAVG
       USE SMSMODULE, ONLY: EPSILON
@@ -761,13 +1024,13 @@ C1------FILL HWADICC TERM FOR EACH CLN DOMAIN NODE WITH FLOW CORRECTION
       ENDDO    
 C----------------------------------------------------------------------------
 C2------LOOP OVER ALL CLN-CLN CONNECTIONS FOR LEAKAGE CORRECTION
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NB = NNDCLN(IFR-1)+1
-        DO N = NB,NN-1
-C2A---------CONNECTION WITH NEXT CLN-NODE OF A SEGMENT
-          ND1 = CLNCON(N)
-          ND2 = CLNCON(N+1)
+      DO NC1 = 1,NCLNNDS
+C2A----------loop over all connections of node NC1 
+        DO II_CLN = IA_CLN(NC1)+1,IA_CLN(NC1+1)-1
+          NC2 = JA_CLN(II_CLN)
+          IF(NC2.GT.NC1) CYCLE
+          ND1 = ACLNNDS(NC1,1)   !  NC1 + NODES
+          ND2 = ACLNNDS(NC2,1)   !  NC2 + NODES
           IF(IBOUND(ND1).EQ.0.OR.IBOUND(ND2).EQ.0) CYCLE
 C2B---------FIND LOWER ROW NUMBER FOR UPPER DIAGONAL OF PGF
           IF(ND2.GT.ND1)THEN
@@ -852,7 +1115,7 @@ C     ------------------------------------------------------------------
       USE GLOBAL, ONLY:NODES,NLAY,IBOUND,HNEW,BUFF,BOT,TOP,ISYM,IOUT,
      1    NODLAY,AMAT,RHS,IA,JA,JAS,PGF,ICONCV,Sn,AKRC,AKR,iunsat
       USE CLN1MODULE, ONLY:  NCLN,NNDCLN,NCLNNDS,ACLNNDS,CLNCON,
-     1    ACLNGWC,NCLNGWC,IFLINCLN
+     1    ACLNGWC,NCLNGWC,ACLNCOND,IFLINCLN,IA_CLN,JA_CLN
       USE GWFBCFMODULE,ONLY:IWDFLG,WETFCT,IHDWET,IWETIT,LAYCON,HDRY,
      1                      HK,WETDRY,LAYAVG
       USE SMSMODULE, ONLY: EPSILON
@@ -860,34 +1123,36 @@ C
       DOUBLE PRECISION HD,BBOT,TTOP,THCK,ZERO,PERIF,PERIW,
      1           TOTTHICK
 C     ------------------------------------------------------------------
-C1------SET CONSTANTS
+C1A------SET CONSTANTS
       ZERO=0.
 C----------------------------------------------------------------------------
-C2------LOOP THROUGH EACH CLN CELL AND COMPUTE FRACTION SATURATED
+C1B------LOOP THROUGH EACH CLN CELL AND COMPUTE FRACTION SATURATED
 C
       DO 200 ICLN=1,NCLNNDS
         N = ACLNNDS(ICLN,1)
         IFLIN = IFLINCLN(ICLN)
         IF(IBOUND(N).EQ.0.OR.IFLIN.EQ.1) CYCLE
 C
-C2A------CALCULATE SATURATED THICKNESS.
+C1C------CALCULATE SATURATED THICKNESS.
         HD=HNEW(N)
         BBOT = ACLNNDS(ICLN,5)
         CALL CLN_THIK(ICLN,HD,BBOT,THCK)
 C
-C2B-----STORE IN Sn ARRAY AND MOVE TO NEXT NODE.
+C1D-----STORE IN Sn ARRAY AND MOVE TO NEXT NODE.
         Sn(N)=THCK
         AKR(N) = THCK
   200 CONTINUE
 C----------------------------------------------------------------------------
-C3------FILL AKRC WITH UPSTREAM KR OF THE CONNECTION FOR ALL CLN-CLN CONNECTIONS
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NB = NNDCLN(IFR-1)+1
-        DO N = NB,NN-1
-C2A---------CONNECTION WITH NEXT CLN-NODE OF A SEGMENT
-          ND1 = CLNCON(N)
-          ND2 = CLNCON(N+1)
+C2------FILL AKRC WITH UPSTREAM KR OF THE CONNECTION FOR ALL CLN-CLN CONNECTIONS
+C----------------------------------------------------------------------------      
+C2A------LOOP OVER ALL CLN NODES 
+      DO NC1 = 1,NCLNNDS
+C------------loop over all connections of node NC1 
+        DO II_CLN = IA_CLN(NC1)+1,IA_CLN(NC1+1)-1
+          NC2 = JA_CLN(II_CLN)
+          IF(NC2.GT.NC1) CYCLE
+          ND1 = ACLNNDS(NC1,1)   !  NC1 + NODES
+          ND2 = ACLNNDS(NC2,1)   !  NC2 + NODES
           IF(IBOUND(ND1).EQ.0.OR.IBOUND(ND2).EQ.0) CYCLE
 C2B---------FIND LOWER ROW NUMBER FOR UPPER DIAGONAL OF PGF
           IF(ND2.GT.ND1)THEN
@@ -985,13 +1250,13 @@ C
 C----------------------------------------------------------------------------
 C3-----COMPUTE CONDUIT-CONDUIT CONDUCTANCE FROM AKRC  AND PGF
 C3A----LOOP OVER ALL CONDUIT SEGMENTS
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NB = NNDCLN(IFR-1)+1
-        DO N = NB,NN-1
-C3B---------CONNECTION WITH NEXT CONDUIT-NODE OF A CONDUIT SEGMENT
-          ND1 = CLNCON(N)
-          ND2 = CLNCON(N+1)
+      DO NC1 = 1,NCLNNDS
+C3B----------loop over all connections of node NC1 
+        DO II_CLN = IA_CLN(NC1)+1,IA_CLN(NC1+1)-1
+          NC2 = JA_CLN(II_CLN)
+          IF(NC2.GT.NC1) CYCLE
+          ND1 = ACLNNDS(NC1,1)   !  NC1 + NODES
+          ND2 = ACLNNDS(NC2,1)   !  NC2 + NODES
           IF(IBOUND(ND1).EQ.0.OR.IBOUND(ND2).EQ.0) CYCLE
 C3C---------FIND LOWER ROW NUMBER FOR UPPER DIAGONAL OF PGF
           IF(ND2.GT.ND1)THEN
@@ -1181,7 +1446,7 @@ C1------INITIALIZE BUDGET ACCUMULATORS AND 1/DELT.
       STOIN=ZERO
       STOUT=ZERO
 C
-C2------IF STEADY STATE, STORAGE TERM IS ZERO SO RETURN
+C2------IF STEADY STATE, STORAGE TERM IS ZERO
       IF(ISS.NE.0) GOTO 400
 C
       ONE=1.0
@@ -1460,7 +1725,7 @@ C     ------------------------------------------------------------------
       USE GLOBAL, ONLY:NCOL,NROW,NLAY,IBOUND,HNEW,BUFF,AMAT,NODLAY,
      1    TOP,IOUT,NODES,NJA,IA,JA,JAS,IUNSTR,ISYM,ITRNSP,FLOWJA
       USE CLN1MODULE, ONLY: ICLNCB,NCLN,NNDCLN,CLNCON,NCLNNDS,ACLNNDS,
-     1    NCLNGWC,ACLNGWC
+     1    NCLNGWC,ACLNGWC,IA_CLN,JA_CLN,NJA_CLN
       USE GWFBASMODULE,ONLY:ICBCFL,DELT,PERTIM,TOTIM,ICHFLG
       USE GWFBCFMODULE,ONLY:IBCFCB,LAYCON
       USE GWTBCTMODULE, ONLY: CBCF
@@ -1482,7 +1747,7 @@ C1------RETURN IF FLOWS ARE NOT BEING SAVED OR RETURNED.
       IF(IBD.EQ.0) RETURN
       ZERO = 0.
 C2------ALLOCATE TEMPORARY ARRAY FOR FLOW ACCUMULATIONS
-      LCLN = NNDCLN(NCLN)
+      LCLN = NJA_CLN
       ALLOCATE(FLOWCLNCLN(LCLN))
       ALLOCATE(FLOWCLNGW(NCLNGWC))
 C
@@ -1495,26 +1760,25 @@ C3------INITIALIZE FLOW ACCUMULATION ARRAYS
       ENDDO
 C----------------------------------------------------------------------------
 C4-----MOVE CLN-CLN FLOW INTO TEMPORARY ARRAY
-      ICLN = 0
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NB = NNDCLN(IFR-1)+1
-        DO N = NB,NN-1
-          ICLN = ICLN + 1
-C4A---------FIND CONNECTION WITH NEXT CLN-NODE OF A CLN SEGMENT
-          ND1 = CLNCON(N)
-          ND2 = CLNCON(N+1)
+C4A------LOOP OVER ALL CLN NODES 
+      DO NC1 = 1,NCLNNDS
+C4B----------loop over all connections of node NC1 
+        DO II_CLN = IA_CLN(NC1)+1,IA_CLN(NC1+1)-1
+          NC2 = JA_CLN(II_CLN)
+          !IF(NC2.GT.NC1) CYCLE
+          ND1 = ACLNNDS(NC1,1)   !  NC1 + NODES
+          ND2 = ACLNNDS(NC2,1)   !  NC2 + NODES
           IF(IBOUND(ND1).EQ.0.OR.IBOUND(ND2).EQ.0) CYCLE
 C4B---------FILL FLOW TERM FOR CLN-CLN CONNECTION
           DO II = IA(ND1)+1,IA(ND1+1)-1
             JJ = JA(II)
             IF(JJ.NE.ND2) CYCLE
             IF(ICHFLG.EQ.0) THEN
-              IF((IBOUND(N).LE.0) .AND. (IBOUND(JJ).LE.0)) CYCLE
+              IF((IBOUND(ND1).LE.0) .AND. (IBOUND(JJ).LE.0)) CYCLE
             END IF
             IIS = JAS(II)
-            FLOWCLNCLN(ICLN)= -FLOWJA(II)
-            IF(ITRNSP.GT.0) CBCF(IIS) = FLOWCLNCLN(ICLN)
+            FLOWCLNCLN(II_CLN)= -FLOWJA(II)
+            IF(ITRNSP.GT.0) CBCF(IIS) = FLOWJA(II)
           ENDDO
         ENDDO
       ENDDO
@@ -1526,17 +1790,15 @@ C4D------RECORD CLN-CLN FLOW
      1         LCLN,IOUT,DELT,PERTIM,TOTIM,IBOUND,NODES)
       IF(IBD.EQ.-1)THEN
 C4E-----WRITE FLOWS TO OUTPUT FILE
-      IF(IOUT.GT.0) WRITE(IOUT,1) TEXT(1),KSTP,KPER
+      WRITE(IOUT,1) TEXT(1),KSTP,KPER
 1     FORMAT(/1X,'WRITING "',A16,'" BELOW',1X,
-     1     'AT TIME STEP',I7,', STRESS PERIOD',I7)
-      NLAG = 0
-      DO IFR = 1,NCLN
-        NN = NNDCLN(IFR)
-        NB = NNDCLN(IFR-1)+1
-        WRITE(IOUT,2) IFR
-2       FORMAT(/1X,'FLOW THROUGH CONDUIT NUMBER:',I10,' ='/1X,40('-'))
-        WRITE(IOUT,3)(FLOWCLNCLN(N),N=NB-NLAG,NN-1-NLAG)
-        NLAG = NLAG + 1
+     1     'AT TIME STEP',I7,', STRESS PERIOD',I7/
+     2  1X,'CLN CELL AND LIST OF CONNECTED CLN CELLS AND FLOWS')
+C
+      DO NC1 = 1,NCLNNDS
+        WRITE(IOUT,2) NC1,(JA_CLN(II),FLOWCLNCLN(II),
+     1  II= IA_CLN(NC1)+1,IA_CLN(NC1+1)-1)
+2       FORMAT(I10,200(I10,G15.6))
       ENDDO
 3     FORMAT(12E15.6)
       ENDIF
@@ -1761,7 +2023,7 @@ C  DEALLOCATE CLN DATA
       USE CLN1MODULE
 C
         DEALLOCATE(NCLN,ICLNCB,ICLNHD,ICLNDD,ICLNIB,NCLNNDS)
-        DEALLOCATE(NNDCLN,CLNCON,ACLNNDS)
+        DEALLOCATE(ACLNNDS)
         DEALLOCATE(IFLINCLN,ICCWADICLN,ICGWADICLN,ACLNGWC,ACLNCOND)
 C
       RETURN
