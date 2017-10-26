@@ -78,7 +78,7 @@ Cdep  initialize number of iterations and closure criteria to zero.
       IF(LINE(ISTART:ISTOP).EQ.'TABLEINPUT') THEN
          IRDTAB = 1
          WRITE(IOUT,32)
-   32  FORMAT(1X,I10,' Stage, volume and area relationship specified ',
+   32  FORMAT(1X,' Stage, volume and area relationship specified ',
      +                'based on an external tabular input file')
       ELSE
         BACKSPACE IN
@@ -1076,7 +1076,7 @@ C     ------------------------------------------------------------------
 C     SPECIFICATIONS:
 C     ------------------------------------------------------------------
       USE GWFLAKMODULE
-      USE GLOBAL,       ONLY: IOUT,NODES,IFREFM,IBOUND,IVC,NODLAY,
+      USE GLOBAL,       ONLY: IOUT,NODES,IFREFM,IBOUND,IVC,NODLAY,IVSD,
      +                        BOT,TOP,AREA,ISSFLG,IA,JA,JAS,NLAY,ISYM
 C     USE GWFSFRMODULE, ONLY: NSS
       CHARACTER*24 ANAME(2)
@@ -1094,6 +1094,13 @@ C     ------------------------------------------------------------------
 C
 C1A-----IF MXLKND IS LESS THAN 1, THEN LAKE IS INACTIVE. RETURN.
       IF(MXLKND.LT.1) RETURN
+      IF(IVSD.NE.-1) THEN
+        WRITE(IOUT,11)
+        STOP
+      ENDIF  
+11    FORMAT(10X,'*** THE LAKE PACKAGE REQUIRES THAT ALL LAYERS HAVE',
+     1  1X,'THE SAME DISCRETIZATION (FLAG IVSD = -1). ***',
+     1  /10X,'*** STOPPING ***.')      
 C
 C1A1----READ INITIAL CONDITIONS FOR ALL LAKES (ONLY READ ONCE)
       ISS = ISSFLG(KKPER)
@@ -1103,13 +1110,27 @@ C1A1----READ INITIAL CONDITIONS FOR ALL LAKES (ONLY READ ONCE)
          IF(ISS.EQ.0) WRITE (IOUT,820)
          IF (IUNITGWT.EQ.0) THEN
             DO 30 LM=1,NLAKES
+! RGN 5/31/2016 added reading of bathymetry table unit numbers.
                IF (IFREFM.EQ.0) THEN
-                  IF(ISS.NE.0) READ (IN,'(3F10.4)') STAGES(LM),SSMN(LM),
-     1              SSMX(LM)
-                  IF(ISS.EQ.0) READ (IN,'(3F10.4)') STAGES(LM)
+                 IF ( IRDTAB.GT.0 ) THEN
+                   IF(ISS.NE.0) READ (IN,'(3F10.4,I5)') STAGES(LM),
+     1                                SSMN(LM),SSMX(LM),LAKTAB(LM)
+                   IF(ISS.EQ.0) READ (IN,'(F10.4,I5)') STAGES(LM),
+     2                                               LAKTAB(LM)
+                 ELSE
+                   IF(ISS.NE.0) READ (IN,'(3F10.4)') STAGES(LM),
+     1              SSMN(LM),SSMX(LM)
+                   IF(ISS.EQ.0) READ (IN,'(F10.4)') STAGES(LM)
+                 END IF
                ELSE
-                  IF(ISS.NE.0) READ (IN,*) STAGES(LM),SSMN(LM),SSMX(LM)
-                  IF(ISS.EQ.0) READ (IN,*) STAGES(LM)
+                 IF ( IRDTAB.GT.0 ) THEN
+                   IF(ISS.NE.0) READ (IN,*)STAGES(LM),SSMN(LM),SSMX(LM),
+     1                                     LAKTAB(LM)
+                   IF(ISS.EQ.0) READ (IN,*) STAGES(LM),LAKTAB(LM)
+                 ELSE
+                   IF(ISS.NE.0) READ (IN,*) STAGES(LM),SSMN(LM),SSMX(LM)
+                   IF(ISS.EQ.0) READ (IN,*) STAGES(LM)
+                 END IF
                END IF
             IF(ISS.NE.0) WRITE (IOUT,22) LM,STAGES(LM),SSMN(LM),SSMX(LM)
             IF(ISS.EQ.0) WRITE (IOUT,22) LM,STAGES(LM)
@@ -1140,6 +1161,22 @@ C 35           WRITE (IOUTS,LFRMAT) LM,(CLAKE(LM,ISOL),ISOL=1,NSOL)
 cgage
 C            CLAKINIT=CLAKE
          END IF
+      END IF
+C
+! RGN 5/31/2016 reading tables was missed for unstructured. Added here.
+      IF ( KKPER==1 .AND. IRDTAB.GT.0 ) THEN
+        DO L1=1,NLAKES
+          WRITE(IOUT,1399) L1
+          iunit = LAKTAB(L1)
+ 1399 FORMAT(//1X,'STAGE/VOLUME RELATION FOR LAKE',I3//6X,'STAGE',
+     1        8X,'VOLUME',8X,'AREA'/)
+          DO  INC=1,151
+          READ(iunit,*) DEPTHTABLE(INC,L1), VOLUMETABLE(INC,L1),
+     +                    AREATABLE(INC,L1)
+          WRITE(IOUT,1315) DEPTHTABLE(INC,L1), VOLUMETABLE(INC,L1),
+     +                    AREATABLE(INC,L1)
+          END DO
+        END DO
       END IF
 C
       WRITE (IOUT,'(/)')
@@ -2519,12 +2556,21 @@ Cdep 890         RATIN=RATIN+RATE
                    GWOUT(LAKE)=GWOUT(LAKE)+RATE
                  END IF
 C11-------IF SAVING COMPACT BUDGET, WRITE FLOW FOR ONE LAKE FACE.
-899              IF(IBD.EQ.2) THEN    !RGN need to fix this for USGs
+899              IF(IBD.EQ.2) THEN
                    FACE(1)=ILAKE(6,L)
                    R=RATE
-C            CALL UBDSVBU(ILKCB,NL,IL,R,FACE(1),1,NAUX,
-C     1                 1,IBOUND,NLAY)
-                 END IF
+                   IF(IUNSTR.EQ.0)THEN
+                     IL = (NL-1) / (NCOL*NROW) + 1
+                     IJ = NL - (IL-1)*NCOL*NROW
+                     IR = (IJ-1)/NCOL + 1
+                     IC = IJ - (IR-1)*NCOL
+                     CALL UBDSVB(ILKCB,NCOL,NROW,IC,IR,IL,R,FACE(1),1,
+     1                           NAUX,1,IBOUND,NLAY)
+                   ELSE
+                     CALL UBDSVBU(ILKCB,NODES,NL,R,FACE(1),1,NAUX,
+     1                            1,IBOUND)
+                   END IF
+                 END IF                 
                END IF
              END IF
            END DO
