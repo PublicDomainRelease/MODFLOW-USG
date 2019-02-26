@@ -29,7 +29,7 @@
  READING ON UNIT   12 WITH FORMAT: (5I13)              
  
   The cell-by-cell budget file is:
- ..\flow.cbc                                                                    
+ ../flow.cbc                                                                    
   
   Single precision budget file
  

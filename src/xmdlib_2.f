@@ -32,6 +32,7 @@
         allocate (tmp(2*nold), stat=ierr)
         if (ierr /= 0) stop "allocate error"
         tmp(1:nold) = a(1:nold)
+        tmp(nold+1:2*nold) = 0.D0
         deallocate (a)
 
         call move_alloc(tmp, a)
@@ -54,6 +55,7 @@
         allocate (tmp(2*nold), stat=ierr)
         if (ierr /= 0) stop "allocate error"
         tmp(1:nold) = a(1:nold)
+        tmp(nold+1:2*nold) = 0
         deallocate (a)
 
         call move_alloc(tmp, a)
@@ -153,6 +155,8 @@ c
       if (allocated(jafwk)) deallocate (jafwk)
       allocate( jafwk(1), levptr(1), stat = ierror )
       if (ierror /= 0) stop "== not enough memory (xmdsfacl) =="
+      jafwk(1) = 0
+      levptr(1) = 0
 
       allocate( lrowptr(n), list(nblack), stat = ierror )
       if (ierror /= 0) stop "== not enough memory (xmdsfacl) =="
@@ -373,10 +377,13 @@ c
       double precision, dimension(:), allocatable :: afwk, afwk0
 
       allocate( levptr(1) )
+      levptr(1) = 0
       if (allocated(jafwk)) deallocate (jafwk)
       if (allocated(afwk)) deallocate (afwk)
       allocate( jafwk(1),  afwk(1) , stat = ierror )
       if (ierror /= 0) stop "== not enough memory (xmdsfacd) =="
+      jafwk(1) = 0
+      afwk(1) = 0.D0
 
 
 c     lsize = njaf+nblack
@@ -1115,6 +1122,12 @@ c      total      5*nblack
       allocate( avk(nblack), q(nblack), aq(nblack), res(nblack),
      [          v(nblack), stat = ierror )
       if (ierror /= 0) stop "== not enough memory (xmdcnjgd) =="
+      
+c     initialize q and aq work arrays (cdl 2/22/2019)
+      do i = 1, nblack
+        q(i) = 0.0d0
+        aq(i) = 0.0d0
+      enddo
 
 
 c     get [a]{x} and calculate {res} -- note: use {soln} as tmp

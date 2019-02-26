@@ -1,6 +1,6 @@
                                   MODFLOW-USG      
       U.S. GEOLOGICAL SURVEY MODULAR FINITE-DIFFERENCE GROUNDWATER FLOW MODEL
-                            VERSION 1.4.00 10/27/2017
+                            VERSION 1.5.00 02/27/2019
 
  LIST FILE: ex3A.lst
                          UNIT    7
@@ -9,7 +9,7 @@
  FILE TYPE:BAS6   UNIT    1   STATUS:OLD    
  FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
 
- OPENING ex3A.WEL
+ OPENING ex3A.wel
  FILE TYPE:WEL   UNIT   14   STATUS:OLD    
  FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
 
@@ -57,7 +57,7 @@
  FILE TYPE:DATA(BINARY)   UNIT   54   STATUS:UNKNOWN
  FORMAT:BINARY                 ACCESS:SEQUENTIAL          
 
- BAS -- BASIC PACKAGE-USG      1.4.00 10/27/2017                        INPUT READ FROM UNIT    1
+ BAS -- BASIC PACKAGE-USG      1.5.00 02/27/2019                        INPUT READ FROM UNIT    1
  
  # MODFLOW2005 Basic Package                                                     
  #                                                                               
@@ -88,6 +88,8 @@
                     ----------------------------------------
      CLN-NODE NO. CLNTYP ORIENTATION  CLN LENGTH    BOT ELEVATION         FANGLE         IFLIN           ICCWADI
      -----------  ------ ----------- -----------    -------------    -----------        ------    -------
+              1      1          0    0.100000E+02    0.000000E+00    0.157000E+01         -1          0
+              2      1          0    0.100000E+02   -0.200000E+02    0.157000E+01         -1          0
 
                      CLN TO 3-D GRID CONNECTION INFORMATION
                     ----------------------------------------
@@ -101,8 +103,7 @@
      CONDUIT NODE        RADIUS   CONDUIT SAT K
      ------------        ------   -------------
               1    0.500000E+00    0.323000E+11
-              2      1          0    0.100000E+02   -0.200000E+02    0.157000E+01         -1          0
-              2      1          0    0.100000E+02   -0.200000E+02    0.157000E+01         -1          0
+ 
 
  DIS -- UNSTRUCTURED GRID DISCRETIZATION PACKAGE, VERSION 1 : 5/17/2010 - INPUT READ FROM UNIT   12
 
@@ -13944,6 +13945,6 @@ LA         2                2                                                   
          TOTAL TIME 1.38240E+07 2.30400E+05  3840.0      160.00     0.43806    
 1
 
- Run end date and time (yyyy/mm/dd hh:mm:ss): 2017/10/27  8:54:26
- Elapsed run time: 17.954 Seconds
+ Run end date and time (yyyy/mm/dd hh:mm:ss): 2019/02/27  8:27:23
+ Elapsed run time: 15.324 Seconds
 

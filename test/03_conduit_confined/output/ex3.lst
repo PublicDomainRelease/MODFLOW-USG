@@ -1,6 +1,6 @@
                                   MODFLOW-USG      
       U.S. GEOLOGICAL SURVEY MODULAR FINITE-DIFFERENCE GROUNDWATER FLOW MODEL
-                            VERSION 1.4.00 10/27/2017
+                            VERSION 1.5.00 02/27/2019
 
  LIST FILE: ex3.lst
                          UNIT    7
@@ -49,7 +49,7 @@
  FILE TYPE:DATA(BINARY)   UNIT   36   STATUS:UNKNOWN
  FORMAT:BINARY                 ACCESS:SEQUENTIAL          
 
- BAS -- BASIC PACKAGE-USG      1.4.00 10/27/2017                        INPUT READ FROM UNIT    1
+ BAS -- BASIC PACKAGE-USG      1.5.00 02/27/2019                        INPUT READ FROM UNIT    1
  
  # MODFLOW2005 Basic Package                                                     
  #                                                                               
@@ -81,6 +81,8 @@
                     ----------------------------------------
      CLN-NODE NO. CLNTYP ORIENTATION  CLN LENGTH    BOT ELEVATION         FANGLE         IFLIN           ICCWADI
      -----------  ------ ----------- -----------    -------------    -----------        ------    -------
+              1      1          0    0.100000E+02   -0.110000E+03    0.157000E+01         -1          0
+              2      1          0    0.100000E+02   -0.130000E+03    0.157000E+01         -1          0
 
                      CLN TO 3-D GRID CONNECTION INFORMATION
                     ----------------------------------------
@@ -94,8 +96,7 @@
      CONDUIT NODE        RADIUS   CONDUIT SAT K
      ------------        ------   -------------
               1    0.500000E+00    0.323000E+11
-              2      1          0    0.100000E+02   -0.130000E+03    0.157000E+01         -1          0
-              2      1          0    0.100000E+02   -0.130000E+03    0.157000E+01         -1          0
+ 
 
  DIS -- UNSTRUCTURED GRID DISCRETIZATION PACKAGE, VERSION 1 : 5/17/2010 - INPUT READ FROM UNIT   12
 
@@ -6594,6 +6595,6 @@ LA         2                1                                                   
          TOTAL TIME 2.41920E+05  4032.0      67.200      2.8000     7.66598E-03
 1
 
- Run end date and time (yyyy/mm/dd hh:mm:ss): 2017/10/27  8:54:08
- Elapsed run time:  2.735 Seconds
+ Run end date and time (yyyy/mm/dd hh:mm:ss): 2019/02/27  8:28:06
+ Elapsed run time:  2.224 Seconds
 

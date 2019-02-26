@@ -508,6 +508,7 @@ C     ******************************************************************
 C
 C        SPECIFICATIONS:
 C     ------------------------------------------------------------------
+      CHARACTER*16 TEXT
       CHARACTER*24 ANAME
       DIMENSION A(JJ)
       CHARACTER*20 FMTIN
@@ -2249,7 +2250,7 @@ C
 C1------WRITE CELL NUMBER AND FLOW RATE
       IF(NAUX.GT.0) THEN
          N2=LAUX+NAUX-1
-         WRITE(IBDCHN) N,Q,(VAL(N),N=LAUX,N2)
+         WRITE(IBDCHN) N,Q,(VAL(NN),NN=LAUX,N2)
       ELSE
          WRITE(IBDCHN) N,Q
       END IF
@@ -2739,23 +2740,24 @@ C1A-------NO CLN OR GNC NODES SO FILL ARRAY DIRECTLY AND RETURN
           RETURN
         ENDIF
 C
-        NJAGS = (NJAG - NODES) / 2
+        NJAGS = (NJAG - NODES) / 2    
         ALLOCATE(TEMP(NJAGS))
 C1-------READ SYMMETRIC DATA IN TEMP LOCATION FOR SUBSURFACE NODES
         CALL U1DREL(TEMP,ANAME,NJAGS,K,IN,IOUT)
 C1A------FILL INTO UNSYMMETRIC TEMPU LOCATION
-        ALLOCATE(TEMPU(NJAG))
         DO N=1,NODES
+          IIC = 0  ! ITERATION COUNTER OF GROUNDWATER CONNECTIONS 
           DO II = IA(N)+1,IA(N+1)-1
             JJ = JA(II)
-            IF(JJ.GT.N)THEN
+            IF(JJ.GT.N.AND. JJ.LE. NODES)THEN
+              IIC = IIC + 1  
               IIS = JAS(II)
-              TEMPU(II) = TEMP(IIS)
-              TEMPU(ISYM(II)) = TEMP(IIS)
+              ARRAY(IIS) = TEMP(IIC)
             ENDIF
           ENDDO
         ENDDO
         DEALLOCATE(TEMP)
+        RETURN
       ELSE
 C2------READ UNSYMMETRIC DATA IN TEMPU LOCATION AND TRANSFER
         ALLOCATE(TEMPU(NJAG))

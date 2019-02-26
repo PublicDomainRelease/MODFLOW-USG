@@ -1,6 +1,6 @@
                                   MODFLOW-USG      
       U.S. GEOLOGICAL SURVEY MODULAR FINITE-DIFFERENCE GROUNDWATER FLOW MODEL
-                            VERSION 1.4.00 10/27/2017
+                            VERSION 1.5.00 02/27/2019
 
  LIST FILE: ex3B.lst
                          UNIT    7
@@ -57,7 +57,7 @@
  FILE TYPE:DATA   UNIT   55   STATUS:UNKNOWN
  FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
 
- BAS -- BASIC PACKAGE-USG      1.4.00 10/27/2017                        INPUT READ FROM UNIT    1
+ BAS -- BASIC PACKAGE-USG      1.5.00 02/27/2019                        INPUT READ FROM UNIT    1
  
  # MODFLOW2005 Basic Package                                                     
  #                                                                               
@@ -88,6 +88,7 @@
                     ----------------------------------------
      CLN-NODE NO. CLNTYP ORIENTATION  CLN LENGTH    BOT ELEVATION         FANGLE         IFLIN           ICCWADI
      -----------  ------ ----------- -----------    -------------    -----------        ------    -------
+              1      1          0    0.300000E+02   -0.200000E+02    0.157000E+01         -1          0
 
                      CLN TO 3-D GRID CONNECTION INFORMATION
                     ----------------------------------------
@@ -101,7 +102,7 @@
      CONDUIT NODE        RADIUS   CONDUIT SAT K
      ------------        ------   -------------
               1    0.500000E+00    0.323000E+11
-              1      1          0    0.300000E+02   -0.200000E+02    0.157000E+01         -1          0
+ 
 
  DIS -- UNSTRUCTURED GRID DISCRETIZATION PACKAGE, VERSION 1 : 5/17/2010 - INPUT READ FROM UNIT   12
 
@@ -9611,6 +9612,6 @@ LA         2                3                                                   
          TOTAL TIME 1.38240E+07 2.30400E+05  3840.0      160.00     0.43806    
 1
 
- Run end date and time (yyyy/mm/dd hh:mm:ss): 2017/10/27  8:54:43
- Elapsed run time: 16.578 Seconds
+ Run end date and time (yyyy/mm/dd hh:mm:ss): 2019/02/27  8:27:37
+ Elapsed run time: 13.734 Seconds
 
